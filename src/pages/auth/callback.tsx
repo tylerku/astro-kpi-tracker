@@ -34,7 +34,7 @@ const CallbackPage: React.FC = () => {
       .then((data) => {
         // Handle the response from the server-side callback
         dispatch({type: 'setAccessToken', value: data.accessToken})
-        Cookies.set('accessToken', data.accessToken, {expires: 30, sameSite: 'strict', httpOnly: true, path: '/'})
+        // Cookies.set('accessToken', data.accessToken, {expires: 30, sameSite: 'strict', httpOnly: true, path: '/'})
         router.push('/home')
       })
       .catch((error) => {
