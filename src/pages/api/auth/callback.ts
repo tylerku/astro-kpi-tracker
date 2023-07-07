@@ -3,6 +3,8 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { google } from 'googleapis';
 import { googleConfig } from '../../../googleConfig';
+import cookies from 'cookies';
+
 
 export default async (req: NextApiRequest, res: NextApiResponse): Promise<void> => {
   try {
@@ -18,8 +20,20 @@ export default async (req: NextApiRequest, res: NextApiResponse): Promise<void> 
     const accessToken = tokens.access_token;
     const refreshToken = tokens.refresh_token;
 
-    console.log('accessToken:', accessToken)
-    console.log('refreshToken:', refreshToken)
+    // console.log('accessToken:', accessToken)
+    // console.log('refreshToken:', refreshToken)
+    cookies(req, res).set('accessToken', accessToken, {
+      path: '/',
+      expires: new Date(Date.now() + 1000 * 60 * 60 * 24),
+      sameSite: 'strict',
+      httpOnly: true,
+    });
+    cookies(req, res).set('refreshToken', refreshToken, {
+      path: '/',
+      expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30),
+      sameSite: 'strict',
+      httpOnly: true,
+    });
 
     // Use the access token and refresh token as needed
 

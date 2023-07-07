@@ -1,6 +1,7 @@
 # Next.js
 next
 node_modules
+.next
 
 # Build files
 out
