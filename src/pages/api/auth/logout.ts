@@ -15,6 +15,11 @@ export default async (req: NextApiRequest, res: NextApiResponse): Promise<void> 
       sameSite: 'strict',
       httpOnly: true,
     })
+    cookies(req, res).set('expires_in', '', {
+      path: '/',
+      sameSite: 'strict',
+      httpOnly: true,
+    })
 
     res.status(200).send({ success: true });
   } catch (error) {

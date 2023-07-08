@@ -2,10 +2,12 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { AuthContext } from '../context'
 import { useEffect, useContext } from 'react'
+import { useRouter } from 'next/router'
 
 export default function Home() {
   
   const {state, dispatch} = useContext(AuthContext)
+  const router = useRouter()
 
   useEffect(() => {
     console.log('The useEffect hook ran with accessToken: ', state.accessToken)
@@ -16,9 +18,16 @@ export default function Home() {
       <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
       <div>
           <h1>Welcome to my Next.js app</h1>
-          <Link href="/api/auth/google">
-            Sign in with google         
-          </Link>
+          <button onClick={() => router.push('/api/auth/google')} className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-red-600">
+            <svg className="w-5 h-5 mr-2" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M17.065 7.98H17v.503h-.45v.444h-1.102V7.98h-.503v-.45h.503V7.03h.444v1.502H17v.45h.065zM13.887 9h-.705v-.502h-.444V9h-.705v.39h.705v.49h.444v-.49h.705V9zM9.538 9h-.897V8.51H8.11V7.98H7.61v.53H6.713v.49h.897v.553H7.11v.5h.53v-.5h.897v-.553H8.64V9zm5.8 0H15.24V8.51h-.49V8h-.51v.51h-.49V9h-.694V8.51H12.12V8h-.51v.51h-.49V9h-.795V8.51h-.49V8H9.74v.51h-.49V9h-.694V8.51h-.49V8H8.11v.51H7.61V9H7.17V8.51h-.49V8H6.184v.51h-.49V9H4.852V8.51H4.362V8h-.49v.51H3.383V9h-.845C2.118 9 2 8.884 2 8.745V8.255c0-.14.118-.255.264-.255h.843V7.51h.49V7h.49v.51h.855c.146 0 .265.115.265.255v.49c0 .14-.118.255-.265.255h-.855V8.49h-.49V8h-.49v.49H3.383V9H2.876C2.73 9 2.61 8.885 2.61 8.745v-.49c0-.14.118-.255.265-.255h.844V8.49h.49V8h.49v.49h.844c.147 0 .266.115.266.255v.49c0 .14-.119.255-.266.255H4.45V9h.703V8.51h.49V8h.51v.51h.49V9h.795V8.51h.49V8h.51v.51h.49V9h.795V8.51h.49V8h.51v.51h.49V9zM17 2.87c.834 0 1.51.678 1.51 1.515v9.23c0 .837-.676 1.515-1.51 1.515H9.103v-1.104h6.65V4.518H9.103V3.414h7.107V2.87z"
+              fill="currentColor"
+              fill-rule="evenodd"
+            />
+            </svg>
+            Sign in with Google
+          </button>
         </div>
         <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
           Get started by editing&nbsp;

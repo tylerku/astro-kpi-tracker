@@ -35,7 +35,7 @@ const AuthContextProvider: React.FC<AuthContextProviderProps> = (props) => {
 
   useEffect(() => {
     //initData()
-    console.log('The useEffect hook ran: ', document.cookie)
+    console.log('The useEffect hook ran: ',)
   }, [])
 
   const initData = async () => {}

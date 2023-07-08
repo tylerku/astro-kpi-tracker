@@ -2,9 +2,12 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/auth/logout": "pages/auth/logout.js",
-  "/home": "pages/home.js",
+  "/auth/refresh": "pages/auth/refresh.js",
   "/": "pages/index.js",
-  "/api/auth/logout": "pages/api/auth/logout.js",
-  "/api/auth/google": "pages/api/auth/google.js"
+  "/home": "pages/home.js",
+  "/api/auth/google": "pages/api/auth/google.js",
+  "/auth/callback": "pages/auth/callback.js",
+  "/api/auth/callback": "pages/api/auth/callback.js",
+  "/auth/logout": "pages/auth/logout.js",
+  "/api/auth/logout": "pages/api/auth/logout.js"
 }
