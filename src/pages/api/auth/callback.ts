@@ -2,24 +2,28 @@
 
 import { NextApiRequest, NextApiResponse } from 'next';
 import { google } from 'googleapis';
-import { getGoogleAuth, googleConfig } from '../../../googleConfig';
 import cookies from 'cookies';
 import moment from 'moment'
+import googleAPIService from '../../../services'
 
 
 export default async (req: NextApiRequest, res: NextApiResponse): Promise<void> => {
   try {
     const { code } = req.body;
 
-    const auth = getGoogleAuth() 
-
-    const { tokens } = await auth.getToken(code);
+    console.log('got here A:', code)
+    const tokens = await googleAPIService.getTokensFromAuthCode(code)
+    console.log('got here B: ', tokens)
     const accessToken = tokens.access_token;
     const refreshToken = tokens.refresh_token;
     const expires_in = tokens.expiry_date ? String(tokens.expiry_date) : null;
-    auth.setCredentials({refresh_token: refreshToken})
-    // console.log('accessToken:', accessToken)
-    // console.log('refreshToken:', refreshToken)
+    console.log('got here C')
+    googleAPIService.setAuthCredentials({
+      access_token: accessToken,
+      refresh_token: refreshToken
+    })
+    console.log('got here D')
+
     const accessTokenExpDate = new Date(tokens.expiry_date ?? 0)
     cookies(req, res).set('accessToken', accessToken, {
       path: '/',

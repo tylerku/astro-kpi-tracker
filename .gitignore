@@ -1,3 +1,6 @@
+# Google
+google-credentials.json
+
 # Next.js
 next
 node_modules
@@ -41,3 +44,4 @@ logs
 # Windows
 Thumbs.db
 
+.env

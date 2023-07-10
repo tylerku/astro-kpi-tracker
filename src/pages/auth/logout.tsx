@@ -7,8 +7,6 @@ import RingLoader from "react-spinners/RingLoader";
 import Cookies from 'js-cookie';
 import axios from 'axios';
 
-// import { googleConfig } from '../../../googleConfig';
-
 const CallbackPage: React.FC = () => {
   const router = useRouter();
   const { dispatch } = useContext<AuthContextValue>(AuthContext)

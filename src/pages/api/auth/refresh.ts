@@ -1,9 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { google } from 'googleapis';
-import { getGoogleAuth, googleConfig } from '../../../googleConfig';
 import cookies from 'cookies';
-import moment from 'moment'
 import { IncomingHttpHeaders } from 'http';
+import googleAPIService from '../../../services'
 
 
 export default async (req: NextApiRequest, res: NextApiResponse): Promise<void> => {
@@ -15,22 +13,19 @@ export default async (req: NextApiRequest, res: NextApiResponse): Promise<void> 
   }
   
   try {
-    console.log('refresh route reached')
-    console.log('old refresh token: ', req.headers['authorization'])
-    const auth = getGoogleAuth()
-
     const oldRefreshtoken = getRefreshTokenFromAuthHeaders(req.headers)
-    auth.setCredentials({refresh_token: oldRefreshtoken})
-    const refreshRequest = await auth.refreshAccessToken()
+    googleAPIService.auth.setCredentials({refresh_token: oldRefreshtoken})
+    const refreshRequest = await googleAPIService.auth.refreshAccessToken()
     
     const accessToken = refreshRequest.credentials.access_token
     const expires_in = refreshRequest.credentials.expiry_date
     const refreshToken = refreshRequest.credentials.refresh_token
 
-    console.log('accessToken:', accessToken)
-    console.log('refreshToken:', refreshToken)
-    console.log('expires_in:', expires_in)
-
+    googleAPIService.setAuthCredentials({
+      access_token: accessToken,
+      refresh_token: refreshToken
+    })
+    
     const expiresDate = expires_in ? new Date(expires_in) : undefined
     cookies(req, res).set('accessToken', accessToken, {
       path: '/',
@@ -50,7 +45,6 @@ export default async (req: NextApiRequest, res: NextApiResponse): Promise<void> 
       sameSite: 'strict',
       httpOnly: true,
     });
-    console.log('returnning to flow...')
     return res.status(200).json({ success: true, accessToken, refreshToken}); // Replace with your desired response
   } catch (error) {
     console.error('Error during OAuth2 refresh:', error);

@@ -13,6 +13,7 @@ const AuthContext = createContext<{dispatch: Function; state: AuthState}>({dispa
 let reducer = (state: any, action: any) => {
   switch (action.type) {
     case 'setAccessToken':
+      console.log('setting the access token in the reducer function: ', action.value)
       return {...state, accessToken: action.value}
     default:
       return {...state}
@@ -32,13 +33,6 @@ const AuthContextProvider: React.FC<AuthContextProviderProps> = (props) => {
   let defaultState: AuthState = {...initialState}
   let [state, dispatch] = useReducer(reducer, defaultState)
   let value: AuthContextValue = {state, dispatch}
-
-  useEffect(() => {
-    //initData()
-    console.log('The useEffect hook ran: ',)
-  }, [])
-
-  const initData = async () => {}
 
   return <AuthContext.Provider value={value}>{props.children}</AuthContext.Provider>
 }

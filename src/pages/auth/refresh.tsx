@@ -7,8 +7,6 @@ import RingLoader from "react-spinners/RingLoader";
 import {parse} from 'cookie'
 import { GetServerSideProps, GetServerSidePropsContext } from 'next';
 
-// import { googleConfig } from '../../../googleConfig';
-
 interface RefreshPageProps {
   refreshToken: string
   successRedirect: string

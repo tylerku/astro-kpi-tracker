@@ -1,8 +1,15 @@
 import { useRouter } from "next/router";
+import { CSSProperties, useState } from "react";
 import { AuthContext } from "../../context";
 import React, { useContext, useEffect } from "react";
-import axios from 'axios'
+import axios, { AxiosResponse } from 'axios'
 import { redirect } from "next/dist/server/api-utils";
+import {google, GoogleApis} from 'googleapis'
+import incrementCell from "../api/googleSheets/incrementCell";
+import { StringLiteral } from "typescript";
+import { GaxiosPromise } from "googleapis/build/src/apis/abusiveexperiencereport";
+import { init } from "next/dist/compiled/@vercel/og/satori";
+import { MoonLoader } from "react-spinners";
 
 interface HomePageProps {
   accessToken: string | null
@@ -11,21 +18,12 @@ const HomePage: React.FC<HomePageProps> = (props) => {
 
   const {state, dispatch} = useContext(AuthContext)
   const router = useRouter()
-
-  const checkAuth = () => {
-    // if (props.accessToken) { // access token was passed from the server
-    //   dispatch({type: 'setAccessToken', value: props.accessToken})
-    // } 
-  }
-
-  useEffect(() => {
-    // checkAuth()
-  }, [])
-
-  useEffect(() => {
-    // const logoutIfNoAccessToken = () => { !state.accessToken && router.push('/') }
-    // logoutIfNoAccessToken()
-  }, [state.accessToken])
+  const [kpi1, setKPI1] = useState(0)
+  const [kpi2, setKPI2] = useState(0)
+  const [kpi3, setKPI3] = useState(0)
+  const [kpi4, setKPI4] = useState(0)
+  const [kpi5, setKPI5] = useState(0)
+  const [kpi6, setKPI6] = useState(0)
 
   const logout = async () => {
     try {
@@ -38,27 +36,97 @@ const HomePage: React.FC<HomePageProps> = (props) => {
   return (
     <div className='flex h-screen w-screen flex-col'>
       <button className='w-20 bg-red-500 rounded m-4 self-end' onClick={() => logout()}>Logout</button>
-      <div className='text-xl self-center'>Astro KPI Tracker</div>
+      <div className='self-center font-mono text-4xl m-8'>Astro KPI Tracker</div>
       <div className='mx-auto h-full flex flex-row self-center'>
-        <KPIColumn title='Agent Outreach'/>
-        <KPIColumn title='MLS Outreach'/>
-        <KPIColumn title='Offers'/>
-        <KPIColumn title='Escrow'/>
+        <KPIColumn kpiNumber={String(kpi1)} cellId='July 2023!D22' title='Listings Called / Texted'/>
+        <KPIColumn kpiNumber={String(kpi2)} cellId='July 2023!E22' title='Listing Agent Conversations'/>
+        <KPIColumn kpiNumber={String(kpi3)} cellId='July 2023!I22' title='Verbal Offers On Market'/>
+        <KPIColumn kpiNumber={String(kpi4)} cellId='July 2023!J22' title='Verbal Offer Off Market'/>
+        <KPIColumn kpiNumber={String(kpi5)} cellId='July 2023!M22' title='Buyers Called / Texted'/>
+        <KPIColumn kpiNumber={String(kpi6)} cellId='July 2023!N22' title='New Buyer Added' />
       </div>
-     
     </div>
   )
 }
 
 interface KPIColumnProps {
   title: string
+  // kpiNumber: string
+  cellId: string
 }
 
 const KPIColumn: React.FC<KPIColumnProps> = (props) => {
+  const [isLoading, setIsLoading] = useState(false)
+  const [kpiNumber, setKPINumber] = useState(0)
+
+  useEffect(() => {
+    initKpiNumber(props.cellId)
+  }, [])
+
+  const initKpiNumber = async (cell: string) => {
+    setIsLoading(true)
+    try {
+      const response: Response = await fetch(`/api/googleSheets/getCellValue?cell=${cell}`, {
+        method: 'GET'
+      })
+      const json = await response.json()
+      setKPINumber(json.data)
+    } catch(error) {
+      console.log('Error initializing cell value: ', error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const incrementCell = async (cell: string) => {
+    const response: Response = await fetch(`/api/googleSheets/incrementCell?cell=${cell}`, {
+      method: 'GET'
+    })
+    const json = await response.json()
+    return json
+  }
+
+  const handleIncrementClicked = async () => {
+    setIsLoading(true)
+    try {
+      const updatedCellValue = await incrementCell(props.cellId)
+      setKPINumber(updatedCellValue)
+    } catch (error) {
+      console.log('Error incrementing cell: ', error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const override: CSSProperties = {
+    display: "block",
+    margin: "0 auto",
+    borderColor: "red",
+  };
+
   return (
     <div className='flex flex-col mx-4 justify-start items-center'>
-      <h1 className='text-center m-4'>{props.title}</h1>
-      <button className='bg-blue-500 rounded p-2 px-4' onClick={() => console.log('Button was clicked')}>Increment</button>
+      <h1 className='text-center m-4 font-bold'>{props.title}</h1>
+      <div className='flex justify-center items-center h-20'>
+        { 
+          isLoading ? 
+          <MoonLoader
+            color={'#ffffff'}
+            loading={isLoading}
+            cssOverride={override}
+            size={50}
+            aria-label="Loading Spinner"
+            data-testid="loader"
+          /> : 
+          <span className='text-center m-4 font-mono text-6xl'>{kpiNumber}</span>
+        }
+      </div>
+      
+      <div className="flex flex-row justify-between m-4">
+        <button disabled={isLoading} className='font-bold bg-green-700 rounded p-2 px-4 mx-2 hover:scale-95 hover:bg-green-500 active:bg-blue-500 transition-all duration-150 disabled:bg-blue-500 disabled:opacity-50' onClick={handleIncrementClicked}>+1</button>
+        {/* <button className='bg-red-700 rounded p-2 px-4 mx-2 hover:scale-95 hover:bg-red-500 active:bg-blue-500 transition-all duration-150' onClick={props.onClick ?? (() => console.log('clicked'))}>-1</button> */}
+      </div>
+      
     </div>
   )
 } 
