@@ -38,12 +38,12 @@ const HomePage: React.FC<HomePageProps> = (props) => {
       <button className='w-20 bg-red-500 rounded m-4 self-end' onClick={() => logout()}>Logout</button>
       <div className='self-center font-mono text-4xl m-8'>Astro KPI Tracker</div>
       <div className='mx-auto h-full flex flex-row self-center'>
-        <KPIColumn cellId='July 2023!D22' title='Listings Called / Texted'/>
-        <KPIColumn cellId='July 2023!E22' title='Listing Agent Conversations'/>
-        <KPIColumn cellId='July 2023!I22' title='Verbal Offers On Market'/>
-        <KPIColumn cellId='July 2023!J22' title='Verbal Offer Off Market'/>
-        <KPIColumn cellId='July 2023!M22' title='Buyers Called / Texted'/>
-        <KPIColumn cellId='July 2023!N22' title='New Buyer Added' />
+        <KPIColumn cellId='July 2023!D23' title='Listings Called / Texted'/>
+        <KPIColumn cellId='July 2023!E23' title='Listing Agent Conversations'/>
+        <KPIColumn cellId='July 2023!I23' title='Verbal Offers On Market'/>
+        <KPIColumn cellId='July 2023!J23' title='Verbal Offer Off Market'/>
+        <KPIColumn cellId='July 2023!M23' title='Buyers Called / Texted'/>
+        <KPIColumn cellId='July 2023!N23' title='New Buyer Added' />
       </div>
     </div>
   )
