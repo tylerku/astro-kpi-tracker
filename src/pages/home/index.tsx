@@ -40,10 +40,10 @@ const HomePage: React.FC<HomePageProps> = (props) => {
       <div className='mx-auto h-full flex flex-row self-center'>
         <KPIColumn cellId='July 2023!D26' title='Listings Called / Texted'/>
         <KPIColumn cellId='July 2023!E26' title='Listing Agent Conversations'/>
-        <KPIColumn cellId='July 2023!I26' title='Verbal Offers On Market'/>
-        <KPIColumn cellId='July 2023!J26' title='Verbal Offer Off Market'/>
-        <KPIColumn cellId='July 2023!M26' title='Buyers Called / Texted'/>
-        <KPIColumn cellId='July 2023!N26' title='New Buyer Added' />
+        <KPIColumn cellId='July 2023!J26' title='Verbal Offers On Market'/>
+        <KPIColumn cellId='July 2023!K26' title='Verbal Offer Off Market'/>
+        <KPIColumn cellId='July 2023!N26' title='Buyers Called / Texted'/>
+        <KPIColumn cellId='July 2023!O26' title='New Buyer Added' />
       </div>
     </div>
   )
