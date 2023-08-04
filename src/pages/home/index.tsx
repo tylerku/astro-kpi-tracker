@@ -34,14 +34,14 @@ const HomePage: React.FC<HomePageProps> = (props) => {
 
   const getMappedCellIDForKPI = (kpiNumber: number) => {
     const monthAndYearString = getMonthAndYearString()
-    const dayOfMonth = new Date().getDate() + 12
+    const row = new Date().getDate() + 12
     const kpiToCellMap:  {[key: number]: string} = {
-      1: `${monthAndYearString}!D${dayOfMonth}}`,
-      2: `${monthAndYearString}!E${dayOfMonth}}`,
-      3: `${monthAndYearString}!J${dayOfMonth}}`,
-      4: `${monthAndYearString}!K${dayOfMonth}}`,
-      5: `${monthAndYearString}!N${dayOfMonth}}`,
-      6: `${monthAndYearString}!O${dayOfMonth}}`     
+      1: `${monthAndYearString}!D${row}`,
+      2: `${monthAndYearString}!E${row}`,
+      3: `${monthAndYearString}!J${row}`,
+      4: `${monthAndYearString}!K${row}`,
+      5: `${monthAndYearString}!N${row}`,
+      6: `${monthAndYearString}!O${row}`     
     }
     return kpiToCellMap[kpiNumber]
   }
