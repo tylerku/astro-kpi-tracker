@@ -25,6 +25,27 @@ const HomePage: React.FC<HomePageProps> = (props) => {
   const [kpi5, setKPI5] = useState(0)
   const [kpi6, setKPI6] = useState(0)
 
+  const getMonthAndYearString = () => {
+    const date = new Date()
+    const month = date.toLocaleString('default', { month: 'long' })
+    const year = date.getFullYear()
+    return `${month} ${year}`
+  }
+
+  const getMappedCellIDForKPI = (kpiNumber: number) => {
+    const monthAndYearString = getMonthAndYearString()
+    const dayOfMonth = new Date().getDate() + 12
+    const kpiToCellMap:  {[key: number]: string} = {
+      1: `${monthAndYearString}!D${dayOfMonth}}`,
+      2: `${monthAndYearString}!E${dayOfMonth}}`,
+      3: `${monthAndYearString}!J${dayOfMonth}}`,
+      4: `${monthAndYearString}!K${dayOfMonth}}`,
+      5: `${monthAndYearString}!N${dayOfMonth}}`,
+      6: `${monthAndYearString}!O${dayOfMonth}}`     
+    }
+    return kpiToCellMap[kpiNumber]
+  }
+
   const logout = async () => {
     try {
       router.push('/auth/logout') 
@@ -38,12 +59,12 @@ const HomePage: React.FC<HomePageProps> = (props) => {
       <button className='w-20 bg-red-500 rounded m-4 self-end' onClick={() => logout()}>Logout</button>
       <div className='self-center font-mono text-4xl m-8'>Astro KPI Tracker</div>
       <div className='mx-auto h-full flex flex-row self-center'>
-        <KPIColumn cellId='July 2023!D26' title='Listings Called / Texted'/>
-        <KPIColumn cellId='July 2023!E26' title='Listing Agent Conversations'/>
-        <KPIColumn cellId='July 2023!J26' title='Verbal Offers On Market'/>
-        <KPIColumn cellId='July 2023!K26' title='Verbal Offer Off Market'/>
-        <KPIColumn cellId='July 2023!N26' title='Buyers Called / Texted'/>
-        <KPIColumn cellId='July 2023!O26' title='New Buyer Added' />
+        <KPIColumn cellId={getMappedCellIDForKPI(1)} title='Listings Called / Texted'/>
+        <KPIColumn cellId={getMappedCellIDForKPI(2)} title='Listing Agent Conversations'/>
+        <KPIColumn cellId={getMappedCellIDForKPI(3)} title='Verbal Offers On Market'/>
+        <KPIColumn cellId={getMappedCellIDForKPI(4)} title='Verbal Offer Off Market'/>
+        <KPIColumn cellId={getMappedCellIDForKPI(5)} title='Buyers Called / Texted'/>
+        <KPIColumn cellId={getMappedCellIDForKPI(6)} title='New Buyer Added' />
       </div>
     </div>
   )
