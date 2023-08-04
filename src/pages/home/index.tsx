@@ -57,7 +57,7 @@ const HomePage: React.FC<HomePageProps> = (props) => {
   return (
     <div className='flex h-screen w-screen flex-col'>
       <button className='w-20 bg-red-500 rounded m-4 self-end' onClick={() => logout()}>Logout</button>
-      <div className='self-center font-mono text-4xl m-8'>Astro KPI Tracker</div>
+      <div className='self-center font-mono text-4xl m-8'>Astro KPI Trackerr</div>
       <div className='mx-auto h-full flex flex-row self-center'>
         <KPIColumn cellId={getMappedCellIDForKPI(1)} title='Listings Called / Texted'/>
         <KPIColumn cellId={getMappedCellIDForKPI(2)} title='Listing Agent Conversations'/>
