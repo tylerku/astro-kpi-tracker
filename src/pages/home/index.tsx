@@ -100,6 +100,7 @@ const KPIColumn: React.FC<KPIColumnProps> = (props) => {
   }
 
   const incrementCell = async (cell: string) => {
+    console.log('incrementing cell: ', cell)
     const response: Response = await fetch(`/api/googleSheets/incrementCell?cell=${cell}`, {
       method: 'GET'
     })
