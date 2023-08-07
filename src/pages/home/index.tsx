@@ -54,6 +54,18 @@ const HomePage: React.FC<HomePageProps> = (props) => {
     }
   }
 
+  const handleTextSMSClicked = async () => {
+    try {
+      const response: Response = await fetch(`/api/sms/sendAccountabilityText`, {
+        method: 'GET'
+      })
+      const json = await response.json()
+      return json
+    } catch (error) {
+      console.log('Error incrementing cell: ', error)
+    }
+  }
+
   return (
     <div className='flex h-screen w-screen flex-col'>
       <button className='w-20 bg-red-500 rounded m-4 self-end' onClick={() => logout()}>Logout</button>
@@ -65,6 +77,11 @@ const HomePage: React.FC<HomePageProps> = (props) => {
         <KPIColumn cellId={getMappedCellIDForKPI(4)} title='Verbal Offer Off Market'/>
         <KPIColumn cellId={getMappedCellIDForKPI(5)} title='Buyers Called / Texted'/>
         <KPIColumn cellId={getMappedCellIDForKPI(6)} title='New Buyer Added' />
+      </div>
+      <div className='mx-auto flex flex-row align-center'>
+        <button className='bg-blue-500 hover:bg-blue-400 rounded p-2 transition-all duration-150 hover:scale-95' onClick={() => handleTextSMSClicked()}>
+          Test SMS Message
+        </button>
       </div>
     </div>
   )
