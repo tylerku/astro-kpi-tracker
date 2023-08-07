@@ -31,7 +31,11 @@ export default async (req: NextApiRequest, res: NextApiResponse): Promise<void> 
       body: messageBody,
     })
     console.log(message);
-    return res.status(200).json({success: 'ok'});
+    return res.status(200).json({
+      body: req.body,
+      query: req.query,
+      cookies: req.cookies,
+    });
   } catch (error) {
     console.log('Error: ', error);
     return res.status(500).json({ error: `Error: ${error}`});
