@@ -18,8 +18,8 @@ export default async (req: NextApiRequest, res: NextApiResponse): Promise<void> 
   }
   console.log('GOT HERE!!!!!')
   try {
-    const accountSid = process.env.TWILIO_ACCOUNT_SID1;
-    const authToken = process.env.TWILIO_AUTH_TOKEN1;
+    const accountSid = process.env.TWILIO_ACCOUNT_SID;
+    const authToken = process.env.TWILIO_AUTH_TOKEN;
     console.log('accountSid:', accountSid)
     console.log('authToken:', authToken)
     const accountabilityPartner = process.env.ACCOUNTABILITY_PARTNER_NUMBER;
