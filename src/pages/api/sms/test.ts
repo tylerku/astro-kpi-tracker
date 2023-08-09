@@ -5,7 +5,7 @@ export default function handler(
   response: NextApiResponse,
 ) {
   response.status(200).json({
-    body: "this is a sample body",
+    body: "this is a sample body response",
     query: request.query,
     cookies: request.cookies,
   });
