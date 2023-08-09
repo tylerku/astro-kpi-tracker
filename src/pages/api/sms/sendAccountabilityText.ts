@@ -20,12 +20,14 @@ export default async (req: NextApiRequest, res: NextApiResponse): Promise<void> 
   try {
     const accountSid = process.env.TWILIO_ACCOUNT_SID;
     const authToken = process.env.TWILIO_AUTH_TOKEN;
+    // const serviceSid = process.env.TWILIO_MESSAGE_SERVICE_ID;
     console.log('accountSid:', accountSid)
     console.log('authToken:', authToken)
     const accountabilityPartner = process.env.ACCOUNTABILITY_PARTNER_NUMBER;
     const client = require('twilio')(accountSid, authToken, {messageServiceSid: process.env.TWILIO_MESSAGE_SERVICE_ID});
     const messageBody = getMessageBody();
     const message = await client.messages.create({
+      // messageingServiceSid: serviceSid,
       from: '+13853277570',
       to: '+17244064427',
       body: messageBody,
