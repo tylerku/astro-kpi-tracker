@@ -27,7 +27,6 @@ export default async (req: NextApiRequest, res: NextApiResponse): Promise<void> 
     const client = require('twilio')(accountSid, authToken, {messageServiceSid: process.env.TWILIO_MESSAGE_SERVICE_ID});
     const messageBody = getMessageBody();
     const message = await client.messages.create({
-      // messageingServiceSid: serviceSid,
       from: '+13853277570',
       to: '+17244064427',
       body: messageBody,
