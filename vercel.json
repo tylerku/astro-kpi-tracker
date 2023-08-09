@@ -1,8 +1,8 @@
 {
   "crons": [
     {
-      "path": "/api/sms/sendAccountabilityText",
-      "schedule": "00 07 * * *"
+      "path": "/api/sms/test",
+      "schedule": "00 08 * * *"
     }
   ]
 }
