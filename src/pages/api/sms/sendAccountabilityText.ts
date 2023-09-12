@@ -16,27 +16,35 @@ export default async (req: NextApiRequest, res: NextApiResponse): Promise<void> 
     2. Did you do your evening routine?
     `
   }
-  console.log('GOT HERE!!!!!')
   try {
-    const accountSid = process.env.TWILIO_ACCOUNT_SID;
-    const authToken = process.env.TWILIO_AUTH_TOKEN;
-    // const serviceSid = process.env.TWILIO_MESSAGE_SERVICE_ID;
-    console.log('accountSid:', accountSid)
-    console.log('authToken:', authToken)
-    const accountabilityPartner = process.env.ACCOUNTABILITY_PARTNER_NUMBER;
-    const client = require('twilio')(accountSid, authToken, {messageServiceSid: process.env.TWILIO_MESSAGE_SERVICE_ID});
-    const messageBody = getMessageBody();
+    const accountSid = process.env.ASTRO_TWILIO_ACCOUNT_SID;
+    const authToken = process.env.ASTRO_TWILIO_AUTH_TOKEN;
+    const messagingServiceSid = process.env.ASTRO_TWILIO_MESSAGE_SERVICE_ID;
+    const to = process.env.ACCOUNTABILITY_PARTNER_NUMBER;
+
+    const client = require('twilio')(accountSid, authToken);
+    const body = getMessageBody();
     const message = await client.messages.create({
-      from: '+13853277570',
-      to: '+17244064427',
-      body: messageBody,
+      messagingServiceSid: messagingServiceSid, 
+      to: to,
+      body: body
     })
-    console.log(message);
-    return res.status(200).json({
-      body: req.body,
-      query: req.query,
-      cookies: req.cookies,
-    });
+    const error = message.errorMessage
+    if (error) {
+      console.log('Error: ', error);
+      res.status(500).json({
+        body: error,
+        query: req.query,
+        cookies: req.cookies,
+      });
+    } else {
+      console.log('Message sent successfully!');
+      res.status(200).json({
+        body: message.body,
+        query: req.query,
+        cookies: req.cookies,
+      });
+    }
   } catch (error) {
     console.log('Error: ', error);
     return res.status(500).json({ error: `Error: ${error}`});
