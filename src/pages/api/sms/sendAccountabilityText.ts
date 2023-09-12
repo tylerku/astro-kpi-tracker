@@ -31,7 +31,7 @@ export default async (req: NextApiRequest, res: NextApiResponse): Promise<void> 
     })
     const error = message.errorMessage
     if (error) {
-      console.log('Error: ', error);
+      console.log('Message send error: ', error);
       res.status(500).json({
         body: error,
         query: req.query,
