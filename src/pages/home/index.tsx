@@ -54,9 +54,9 @@ const HomePage: React.FC<HomePageProps> = (props) => {
     }
   }
 
-  const handleTextSMSClicked = async () => {
+  const handleReadNotionDataClicked = async () => {
     try {
-      const response: Response = await fetch(`/api/sms/sendAccountabilityText`, {
+      const response: Response = await fetch(`/api/notion/getOffersMade`, {
         method: 'GET'
       })
       const json = await response.json()
@@ -79,8 +79,8 @@ const HomePage: React.FC<HomePageProps> = (props) => {
         <KPIColumn cellId={getMappedCellIDForKPI(6)} title='New Buyer Added' />
       </div>
       <div className='mx-auto flex flex-row align-center'>
-        <button className='bg-blue-500 hover:bg-blue-400 rounded p-2 transition-all duration-150 hover:scale-95' onClick={() => handleTextSMSClicked()}>
-          Test SMS Message
+        <button className='bg-blue-500 hover:bg-blue-400 rounded p-2 transition-all duration-150 hover:scale-95' onClick={() => handleReadNotionDataClicked()}>
+          Read Notion Data 
         </button>
       </div>
     </div>

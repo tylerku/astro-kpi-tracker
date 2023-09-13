@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import cookies from 'cookies';
 import { IncomingHttpHeaders } from 'http';
-import googleAPIService from '../../../services'
+import {googleAPIService} from '../../../services'
 
 
 export default async (req: NextApiRequest, res: NextApiResponse): Promise<void> => {

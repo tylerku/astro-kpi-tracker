@@ -1,3 +1,6 @@
 import GoogleAPIService from './GoogleAPIService';
+import NotionAPIService from './NotionAPIService';
 
-export default new GoogleAPIService()
+const googleAPIService = new GoogleAPIService()
+const notionAPIService = new NotionAPIService()
+export {googleAPIService, notionAPIService}

@@ -1,20 +1,14 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import cookies from "cookies";
-import googleAPIService from "../../../services";
+import { notionAPIService } from "../../../services";
 import { AuthPlus, GoogleApis } from "googleapis/build/src/googleapis";
 import { access } from "fs";
 
 
 export default async (req: NextApiRequest, res: NextApiResponse): Promise<void> => {
-  const getMessageBody = () => {
-    const messageBody = {
-      
-    }
-    return `This is an example message body:
-    
-    1. Did you do your morning routine?
-    2. Did you do your evening routine?
-    `
+  const getMessageBody = async () => {
+    const offersMade = await notionAPIService.getNumberKPI('Offers Made');
+    return `Ty's day today:\n\nOffers Made: ${offersMade}\nTime spent working: (NULL)`
   }
   try {
     const accountSid = process.env.ASTRO_TWILIO_ACCOUNT_SID;
@@ -23,7 +17,11 @@ export default async (req: NextApiRequest, res: NextApiResponse): Promise<void> 
     const to = process.env.ACCOUNTABILITY_PARTNER_NUMBER;
 
     const client = require('twilio')(accountSid, authToken);
-    const body = getMessageBody();
+    const body = await getMessageBody();
+    // const message = {
+    //   errorMessage: null,
+    //   body: 'This is just a test'
+    // }
     const message = await client.messages.create({
       messagingServiceSid: messagingServiceSid, 
       to: to,

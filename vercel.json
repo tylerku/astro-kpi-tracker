@@ -2,7 +2,7 @@
   "crons": [
     {
       "path": "/api/sms/sendAccountabilityText",
-      "schedule": "0 22 * * *"
+      "schedule": "0 22 * * 1-5"
     }
   ]
 }

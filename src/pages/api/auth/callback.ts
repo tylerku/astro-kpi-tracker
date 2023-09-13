@@ -4,7 +4,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { google } from 'googleapis';
 import cookies from 'cookies';
 import moment from 'moment'
-import googleAPIService from '../../../services'
+import {googleAPIService} from '../../../services'
 
 
 export default async (req: NextApiRequest, res: NextApiResponse): Promise<void> => {
