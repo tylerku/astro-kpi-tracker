@@ -1,14 +1,16 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import cookies from "cookies";
-import { notionAPIService } from "../../../services";
+import notionAPIService from "../../../services/NotionAPIService";
 import { AuthPlus, GoogleApis } from "googleapis/build/src/googleapis";
 import { access } from "fs";
 
 
 export default async (req: NextApiRequest, res: NextApiResponse): Promise<void> => {
   const getMessageBody = async () => {
-    const offersMade = await notionAPIService.getNumberKPI('Offers Made');
-    return `Ty's day today:\n\nOffers Made: ${offersMade}\nTime spent working: (NULL)`
+    const kpiNames = ['Offers Made', 'Agent Conversations', 'Buyers Found']
+    const goals = { 'Offers Made': 5, 'Agent Conversations': 50, 'Buyers Found': 2}
+    const kpis = await notionAPIService.getTodaysKPIs(kpiNames, goals)
+    return `Ty's day today:\n\nOffers Made: ${kpis.find((kpi) => kpi.key === 'Offers Made')}/${goals['Offers Made']}\nAgent Conversations: ${kpis.find((kpi) => kpi.key === 'Agent Conversations')}/${goals['Agent Conversations']}\nBuyers Found: ${kpis.find((kpi) => kpi.key === 'Buyers Found')}/${goals['Buyers Found']}\n\nTell Ty he's freaking sick`
   }
   try {
     const accountSid = process.env.ASTRO_TWILIO_ACCOUNT_SID;

@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { google } from 'googleapis';
 import cookies from "cookies";
-import {googleAPIService} from "../../../services";
+import googleAPIService from "../../../services/GoogleAPIService";
 import { AuthPlus, GoogleApis } from "googleapis/build/src/googleapis";
 import { access } from "fs";
 
