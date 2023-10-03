@@ -1,12 +1,31 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import App from "next/app";
 import './globals.css';
 import {AuthContextProvider} from '../context';
+import {Navbar} from "../components";
+import { useRouter } from "next/router";
 
 const MyApp = ({ Component, pageProps }: any) => {
+  const router = useRouter()
+  const [isLoginRoute, setIsLoginRoute] = useState(false)
+
+  useEffect(() => {
+    if(router.pathname === '/') {
+      setIsLoginRoute(true)
+    } else {
+      setIsLoginRoute(false)
+    }
+    console.log('route: ', router.pathname)
+  }, [router.pathname])
+
   return (
     <AuthContextProvider>
-      <Component {...pageProps} />
+      <div className='flex'>
+        { !isLoginRoute && <Navbar /> }
+        <div className={`${isLoginRoute ? 'w-full' : 'w-[88%]'}`}>
+          <Component {...pageProps} />
+        </div>
+      </div>
     </AuthContextProvider>
   );
 };

@@ -10,41 +10,18 @@ import { StringLiteral } from "typescript";
 import { GaxiosPromise } from "googleapis/build/src/apis/abusiveexperiencereport";
 import { init } from "next/dist/compiled/@vercel/og/satori";
 import { MoonLoader } from "react-spinners";
+import {PageWrapper, GoalsTable} from '../../components'
+import { SingleBarGraph, BarGraph, TimeDisplay, SingleBarGraphOption } from "../../components/Dashboard";
+import notionAPIService, { notionKPI } from "../../services/NotionAPIService";
 
 interface HomePageProps {
   accessToken: string | null
+  kpiMetrics: notionKPI[]
 }
 const HomePage: React.FC<HomePageProps> = (props) => {
 
-  const {state, dispatch} = useContext(AuthContext)
   const router = useRouter()
-  const [kpi1, setKPI1] = useState(0)
-  const [kpi2, setKPI2] = useState(0)
-  const [kpi3, setKPI3] = useState(0)
-  const [kpi4, setKPI4] = useState(0)
-  const [kpi5, setKPI5] = useState(0)
-  const [kpi6, setKPI6] = useState(0)
-
-  const getMonthAndYearString = () => {
-    const date = new Date()
-    const month = date.toLocaleString('default', { month: 'long' })
-    const year = date.getFullYear()
-    return `${month} ${year}`
-  }
-
-  const getMappedCellIDForKPI = (kpiNumber: number) => {
-    const monthAndYearString = getMonthAndYearString()
-    const row = new Date().getDate() + 12
-    const kpiToCellMap:  {[key: number]: string} = {
-      1: `${monthAndYearString}!D${row}`,
-      2: `${monthAndYearString}!E${row}`,
-      3: `${monthAndYearString}!J${row}`,
-      4: `${monthAndYearString}!K${row}`,
-      5: `${monthAndYearString}!N${row}`,
-      6: `${monthAndYearString}!O${row}`     
-    }
-    return kpiToCellMap[kpiNumber]
-  }
+  const [showLayover, setShowLayover] = useState(false)
 
   const logout = async () => {
     try {
@@ -54,120 +31,132 @@ const HomePage: React.FC<HomePageProps> = (props) => {
     }
   }
 
-  const handleReadNotionDataClicked = async () => {
-    try {
-      const response: Response = await fetch(`/api/notion/getOffersMade`, {
-        method: 'GET'
-      })
-      const json = await response.json()
-      return json
-    } catch (error) {
-      console.log('Error incrementing cell: ', error)
-    }
-  }
-
   return (
-    <div className='flex h-screen w-screen flex-col'>
-      <button className='w-20 bg-red-500 rounded m-4 self-end' onClick={() => logout()}>Logout</button>
-      <div className='self-center font-mono text-4xl m-8'>Astro KPI Trackerr</div>
-      <div className='mx-auto h-full flex flex-row self-center'>
-        <KPIColumn cellId={getMappedCellIDForKPI(1)} title='Listings Called / Texted'/>
-        <KPIColumn cellId={getMappedCellIDForKPI(2)} title='Listing Agent Conversations'/>
-        <KPIColumn cellId={getMappedCellIDForKPI(3)} title='Verbal Offers On Market'/>
-        <KPIColumn cellId={getMappedCellIDForKPI(4)} title='Verbal Offer Off Market'/>
-        <KPIColumn cellId={getMappedCellIDForKPI(5)} title='Buyers Called / Texted'/>
-        <KPIColumn cellId={getMappedCellIDForKPI(6)} title='New Buyer Added' />
+    <PageWrapper>
+      <div className='h-full w-full bg-[#04122D] flex flex-row'>
+        <div className='h-full w-full p-10 flex-grow flex flex-col space-y-8'>
+          <PageHeader title={'Good Morning, Ty'}/>
+          <div className='w-full flex-grow flex flex-row justify-center items-center space-x-6'>
+            <TodaySection
+              className='w-[40%]'
+              singleBarGraphOptions={props.kpiMetrics.map((item: notionKPI) => ({
+                maxY: item.goal,
+                value: item.value,
+                title: item.key,
+                yInterval: item.goal / 5,
+                showZero: true
+              }))}
+            />
+            <GraphsSection className='w-[60%]'/>
+          </div>
+          <div className='w-full max-h-[50%] relative flex'>
+            <GoalsTable kpiMetrics={props.kpiMetrics}/>
+          </div>
+        </div>
+        <div className='h-full w-[25%] bg-[#212046] max-w-[400px]'>
+        </div>
       </div>
-      <div className='mx-auto flex flex-row align-center'>
-        <button className='bg-blue-500 hover:bg-blue-400 rounded p-2 transition-all duration-150 hover:scale-95' onClick={() => handleReadNotionDataClicked()}>
-          Read Notion Data 
-        </button>
-      </div>
-    </div>
+    </PageWrapper>
   )
 }
 
-interface KPIColumnProps {
+
+
+interface PageHeaderProps {
   title: string
-  // kpiNumber: string
-  cellId: string
 }
 
-const KPIColumn: React.FC<KPIColumnProps> = (props) => {
-  const [isLoading, setIsLoading] = useState(false)
-  const [kpiNumber, setKPINumber] = useState(0)
+const PageHeader: React.FC<PageHeaderProps> = (props) => {
 
-  useEffect(() => {
-    initKpiNumber(props.cellId)
-  }, [])
-
-  const initKpiNumber = async (cell: string) => {
-    setIsLoading(true)
-    try {
-      const response: Response = await fetch(`/api/googleSheets/getCellValue?cell=${cell}`, {
-        method: 'GET'
-      })
-      const json = await response.json()
-      setKPINumber(json.data)
-    } catch(error) {
-      console.log('Error initializing cell value: ', error)
-    } finally {
-      setIsLoading(false)
-    }
+  const getTodaysDate = () => {
+    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September','October','November', 'December']
+    const today = new Date();
+    const month = today.getMonth(); // Months are zero-indexed
+    const day = today.getDate();
+    const year = today.getFullYear();
+    return `${monthNames[month]} ${day}, ${year}`;
   }
-
-  const incrementCell = async (cell: string) => {
-    console.log('incrementing cell: ', cell)
-    const response: Response = await fetch(`/api/googleSheets/incrementCell?cell=${cell}`, {
-      method: 'GET'
-    })
-    const json = await response.json()
-    return json
-  }
-
-  const handleIncrementClicked = async () => {
-    setIsLoading(true)
-    try {
-      const updatedCellValue = await incrementCell(props.cellId)
-      setKPINumber(updatedCellValue)
-    } catch (error) {
-      console.log('Error incrementing cell: ', error)
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  const override: CSSProperties = {
-    display: "block",
-    margin: "0 auto",
-    borderColor: "red",
-  };
 
   return (
-    <div className='flex flex-col mx-4 justify-start items-center'>
-      <h1 className='text-center m-4 font-bold'>{props.title}</h1>
-      <div className='flex justify-center items-center h-20'>
-        { 
-          isLoading ? 
-          <MoonLoader
-            color={'#ffffff'}
-            loading={isLoading}
-            cssOverride={override}
-            size={50}
-            aria-label="Loading Spinner"
-            data-testid="loader"
-          /> : 
-          <span className='text-center m-4 font-mono text-6xl'>{kpiNumber}</span>
-        }
+    <div className='w-full flex flex-row justify-between'>
+      <div className='text-white text-3xl font-bold'>
+        {props.title}
       </div>
-      
-      <div className="flex flex-row justify-between m-4">
-        <button disabled={isLoading} className='font-bold bg-green-700 rounded p-2 px-4 mx-2 hover:scale-95 hover:bg-green-500 active:bg-blue-500 transition-all duration-150 disabled:bg-blue-500 disabled:opacity-50' onClick={handleIncrementClicked}>+1</button>
-        {/* <button className='bg-red-700 rounded p-2 px-4 mx-2 hover:scale-95 hover:bg-red-500 active:bg-blue-500 transition-all duration-150' onClick={props.onClick ?? (() => console.log('clicked'))}>-1</button> */}
+      <div className='text-[#BCBCBC] text-3xl font-bold'>
+        {getTodaysDate()}
       </div>
-      
     </div>
   )
-} 
+}
+
+interface TodaySectionProps {
+  className: string
+  singleBarGraphOptions: SingleBarGraphOption[]
+}
+
+const TodaySection: React.FC<TodaySectionProps> = (props) => {
+
+
+
+  return (
+    <div className={`flex flex-col h-full space-y-2 ${props.className ?? ''}`}>
+      <div className='text-base font-bold font-white w-full'>
+        Today
+      </div>
+      <div className='flex flex-row flex-grow w-full space-x-4'>
+        <div className='flex flex-grow h-full'>
+          <SingleBarGraph options={props.singleBarGraphOptions} />
+        </div>
+        <div className='flex flex-grow flex-col h-full space-y-4'>
+          <div className='flex-grow w-full'>
+            <TimeDisplay time={'45:00'} title='Current Task'/>
+          </div>
+          <div className='flex-grow w-full'>
+            <TimeDisplay time={'2 hr 34 min'} title={'Time Working'}/>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+interface GraphsSectionProps {
+  className: string
+}
+
+const GraphsSection: React.FC<GraphsSectionProps> = (props) => {
+  return (
+    <div className={`h-full ${props.className ?? ''}`}>
+      <BarGraph />
+    </div>
+  )
+}
+
+export const getServerSideProps = async () => {
+  const kpiNames: string[] = ["Offers Made", "Agent Conversations", "Buyers Called"]
+  const kpiGoals: Record<string, number> = { [kpiNames[0]]: 10, [kpiNames[1]]: 20, [kpiNames[2]]: 25 }
+  const kpiMetrics = await notionAPIService.getTodaysKPIs(kpiNames, kpiGoals)
+
+  // const kpiMetrics: notionKPI[] = [{
+  //   key: 'Offers Made',
+  //   goal: 10,
+  //   value: 5
+  // }, {
+  //   key: 'Agent Conversations',
+  //   goal: 50,
+  //   value: 20
+  // }, {
+  //   key: 'Buyers Called',
+  //   goal: 2,
+  //   value: 1
+  // }]
+  return {
+    props: {
+      kpiMetrics 
+    }
+  }
+}
+
+
 
 export default HomePage

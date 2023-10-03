@@ -14,11 +14,12 @@ export function middleware(request: NextRequest) {
   const accessToken = request.cookies.get('accessToken')?.value
   const refreshToken = request.cookies.get('refreshToken')?.value
 
-  //TODO: Remove false from the if condition
+  // If the user has an access token and it's not expired, allow the request
   if (accessToken && !isAccessTokenExpired()) {
     return NextResponse.next()
   }
 
+  // If the user has a refresh token, redirect to the refresh page
   if (refreshToken) {
     const nextResponse = NextResponse.redirect(`${request.nextUrl.protocol}//${request.nextUrl.host}/auth/refresh?redirectPath=${request.nextUrl.pathname}`)
     return nextResponse
@@ -26,8 +27,7 @@ export function middleware(request: NextRequest) {
 
   return NextResponse.redirect(`${request.nextUrl.protocol}//${request.nextUrl.host}`)
 }
- 
-// See "Matching Paths" below to learn more
+
 export const config = {
-  matcher: '/home/:path*',
+  matcher: ['/home/:path*', '/about/:path*'],
 }

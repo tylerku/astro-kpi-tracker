@@ -11,7 +11,7 @@ export interface GoogleAPIRequestAuthParams {
   access_token: string
 }
 
-export default class GoogleAPIService {
+class GoogleAPIService {
   private static instance: GoogleAPIService;
   auth: Auth.OAuth2Client;
   sheets: any;
@@ -125,3 +125,5 @@ export default class GoogleAPIService {
   }
 
 }
+
+export default new GoogleAPIService()

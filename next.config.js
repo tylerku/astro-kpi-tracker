@@ -1,4 +1,20 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {}
 
-module.exports = nextConfig
+module.exports = {
+  async redirects() {
+    return [
+      {
+        source: '/',
+        has: [
+          {
+            type: 'cookie',
+            key: 'accessToken',
+            value: '.*'
+          }
+        ],
+        destination: '/home',
+        permanent: true,
+      },
+    ]
+  }
+}

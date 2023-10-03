@@ -3,9 +3,8 @@ import notionAPIService from "../../../services/NotionAPIService";
 
 export default async (req: NextApiRequest, res: NextApiResponse): Promise<void> => {
   try {
-    // make request to notion api here 
-    const response = await notionAPIService.getNumberKPI('Offers Made');    
-    console.log('offers made: ', response )
+    const { kpiName, kpiNumber } = req.body;
+    const response = await notionAPIService.updateTodaysKPI(kpiName, kpiNumber);    
     return res.status(200).json({data: response});
 
   } catch (error) {

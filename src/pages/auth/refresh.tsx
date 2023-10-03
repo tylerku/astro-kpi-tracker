@@ -26,7 +26,6 @@ const RefreshPage: React.FC<RefreshPageProps> = (props) => {
         'Authorization': `Bearer ${props.refreshToken}`
       }
     })
-    console.log('finished the refresh request')
     if(response.ok) {
       console.log('The refresh request was successful')
       const data = await response.json()
@@ -46,7 +45,7 @@ const RefreshPage: React.FC<RefreshPageProps> = (props) => {
   };
 
   return (
-    <div className='mt-20 w-full flex flex-col'>
+    <div className='pt-20 w-full h-full flex flex-col bg-[#04122D]'>
       <h1 className='my-20 text-xl text-center justify-center'>Refreshing your Astro KPI access...</h1>
       <RingLoader
         color={'#ffffff'}
