@@ -136,20 +136,6 @@ export const getServerSideProps = async () => {
   const kpiNames: string[] = ["Offers Made", "Agent Conversations", "Buyers Found"]
   const kpiGoals: Record<string, number> = { [kpiNames[0]]: 5, [kpiNames[1]]: 50, [kpiNames[2]]: 2 }
   const kpiMetrics = await notionAPIService.getTodaysKPIs(kpiNames, kpiGoals)
-
-  // const kpiMetrics: notionKPI[] = [{
-  //   key: 'Offers Made',
-  //   goal: 10,
-  //   value: 5
-  // }, {
-  //   key: 'Agent Conversations',
-  //   goal: 50,
-  //   value: 20
-  // }, {
-  //   key: 'Buyers Called',
-  //   goal: 2,
-  //   value: 1
-  // }]
   return {
     props: {
       kpiMetrics 
