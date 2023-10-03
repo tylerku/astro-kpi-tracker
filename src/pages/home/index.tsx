@@ -22,6 +22,11 @@ const HomePage: React.FC<HomePageProps> = (props) => {
 
   const router = useRouter()
   const [showLayover, setShowLayover] = useState(false)
+  const [kpiMetrics, setKpiMetrics] = useState<notionKPI[]>(props.kpiMetrics)
+
+  useEffect(() => {
+    setKpiMetrics(props.kpiMetrics)
+  }, [props.kpiMetrics])
 
   const logout = async () => {
     try {
@@ -29,6 +34,16 @@ const HomePage: React.FC<HomePageProps> = (props) => {
     } catch (error) {
       console.log('Error logging out: ', error)
     }
+  }
+
+  const onGoalsTableKpiUpdated = (kpi: notionKPI) => {
+    const updatedKpiMetrics = kpiMetrics.map((item: notionKPI) => {
+      if (item.key === kpi.key) {
+        return kpi
+      }
+      return item
+    })
+    setKpiMetrics(updatedKpiMetrics)
   }
 
   return (
@@ -39,7 +54,7 @@ const HomePage: React.FC<HomePageProps> = (props) => {
           <div className='w-full flex-grow flex flex-row justify-center items-center space-x-6'>
             <TodaySection
               className='w-[40%]'
-              singleBarGraphOptions={props.kpiMetrics.map((item: notionKPI) => ({
+              singleBarGraphOptions={kpiMetrics.map((item: notionKPI) => ({
                 maxY: item.goal,
                 value: item.value,
                 title: item.key,
@@ -50,7 +65,7 @@ const HomePage: React.FC<HomePageProps> = (props) => {
             <GraphsSection className='w-[60%]'/>
           </div>
           <div className='w-full max-h-[50%] relative flex'>
-            <GoalsTable kpiMetrics={props.kpiMetrics}/>
+            <GoalsTable kpiMetrics={kpiMetrics} onKpiUpdated={onGoalsTableKpiUpdated}/>
           </div>
         </div>
         <div className='h-full w-[25%] bg-[#212046] max-w-[400px]'>

@@ -13,16 +13,22 @@ const sizeClasses = {
 
 interface GoalsTableProps {
   kpiMetrics: notionKPI[]
+  onKpiUpdated: (kpi: notionKPI) => void
 }
 
 const GoalsTable: React.FC<GoalsTableProps> = (props) => {
+
+  const handleRowValueUpdate = (kpi: notionKPI) => {
+    props.onKpiUpdated(kpi)
+  }
+
   return (
     <div className="w-full flex-grow mt-5 space-y-4 flex flex-col">
       <TableHeader/>
       <div className='w-full space-y-4 flex-grow overflow-auto'>
         {props.kpiMetrics?.map((kpi: notionKPI, index: number) => {
           return (
-            <TableRow name={kpi.key} goal={kpi.goal} currentValue={kpi.value} rowKey={index} key={index}/>
+            <TableRow kpi={kpi} rowKey={index} key={index} onValueUpdate={(updatedValue: notionKPI) => handleRowValueUpdate(updatedValue)}/>
           )
         })}
       </div>
@@ -54,21 +60,20 @@ const TableHeader:React.FC<TableHeaderProps> = (props) => {
 }
 
 interface TableRowProps {
-  name: string
-  goal: number
-  currentValue: number
+  kpi: notionKPI
   rowKey: number
+  onValueUpdate: (kpi: notionKPI) => void
 }
 
 const TableRow:React.FC<TableRowProps> = (props) => {
 
   const updateKPITimeoutId = useRef<NodeJS.Timeout | null>(null)
-  const [kpiValue, setKpiValue] = useState<number>(props.currentValue)
+  const [kpiValue, setKpiValue] = useState<number>(props.kpi.value)
 
   const updateTodayKPI = async (newValue: number) => {
     const res = await fetch('/api/notion/updateTodayKPI', {
         method: 'POST',
-        body: JSON.stringify({ kpiName: props.name, kpiNumber: newValue }),
+        body: JSON.stringify({ kpiName: props.kpi.key, kpiNumber: newValue }),
         headers: {
           'Content-Type': 'application/json',
         },
@@ -81,6 +86,7 @@ const TableRow:React.FC<TableRowProps> = (props) => {
     try {
       const incrementedValue = kpiValue + 1
       setKpiValue(incrementedValue)
+      props.onValueUpdate({ ...props.kpi, value: incrementedValue })
 
       if (updateKPITimeoutId.current) {
         clearTimeout(updateKPITimeoutId.current)
@@ -102,13 +108,13 @@ const TableRow:React.FC<TableRowProps> = (props) => {
   return (
     <div className={`ml-[3%] w-[94%] flex justify-center items-center bg-[#212046] rounded-lg py-6 ${sizeClasses.containerXPadding} font-bold text-lg`}>
       <div className={`${sizeClasses.nameColumn}`}>
-        {props.name}
+        {props.kpi.key}
       </div>
       <div className={`${sizeClasses.goalColumn}`}>
-        {kpiValue} / {props.goal}
+        {kpiValue} / {props.kpi.goal}
       </div>
       <div className={`${sizeClasses.progressColumn} pr-12`}>
-        <ProgressBar current={kpiValue} goal={props.goal} animationDelay={props.rowKey * 100}/>
+        <ProgressBar current={kpiValue} goal={props.kpi.goal} animationDelay={props.rowKey * 100}/>
       </div>
       <div className={`${sizeClasses.buttonColumn}`}>
         <button onClick={() => handleButtonClicked()}className='transition-all duration-200 hover:scale-90 w-[90%] max-w-[46px] aspect-square p-2 bg-[#121939] hover:bg-[#6E6E8199] rounded'>

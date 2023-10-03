@@ -166,7 +166,7 @@ const SingleBarGraph: React.FC<SingleBarGraphProps> = (props) => {
           { getYAxisNumbers() } 
           { getSelectedOption()?.showZero && <div className='text-slate-500 font-semibold'>0</div> }
         </div>
-        <div className={`w-full ${percentageHeightClasses[getCurrentOptionHeightPercentage()]} bg-[#41C666] rounded`}>
+        <div className={`transition-all duration-500 w-full ${percentageHeightClasses[getCurrentOptionHeightPercentage()]} bg-[#41C666] rounded`}>
         </div>
         {/* Add an element just for spacing here */}
         <div className='w-4 h-full'>
