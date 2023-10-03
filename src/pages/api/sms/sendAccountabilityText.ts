@@ -10,7 +10,7 @@ export default async (req: NextApiRequest, res: NextApiResponse): Promise<void> 
     const kpiNames = ['Offers Made', 'Agent Conversations', 'Buyers Found']
     const goals = { 'Offers Made': 5, 'Agent Conversations': 50, 'Buyers Found': 2}
     const kpis = await notionAPIService.getTodaysKPIs(kpiNames, goals)
-    return `Ty's day today:\n\nOffers Made: ${kpis.find((kpi) => kpi.key === 'Offers Made')}/${goals['Offers Made']}\nAgent Conversations: ${kpis.find((kpi) => kpi.key === 'Agent Conversations')}/${goals['Agent Conversations']}\nBuyers Found: ${kpis.find((kpi) => kpi.key === 'Buyers Found')}/${goals['Buyers Found']}\n\nTell Ty he's freaking sick`
+    return `Ty's day today:\n\nOffers Made: ${kpis.find((kpi) => kpi.key === 'Offers Made')?.value ?? 0}/${goals['Offers Made']}\nAgent Conversations: ${kpis.find((kpi) => kpi.key === 'Agent Conversations')?.value ?? 0}/${goals['Agent Conversations']}\nBuyers Found: ${kpis.find((kpi) => kpi.key === 'Buyers Found')?.value ?? 0}/${goals['Buyers Found']}\n\nTell Ty he's freaking sick`
   }
   try {
     const accountSid = process.env.ASTRO_TWILIO_ACCOUNT_SID;
@@ -20,10 +20,6 @@ export default async (req: NextApiRequest, res: NextApiResponse): Promise<void> 
 
     const client = require('twilio')(accountSid, authToken);
     const body = await getMessageBody();
-    // const message = {
-    //   errorMessage: null,
-    //   body: 'This is just a test'
-    // }
     const message = await client.messages.create({
       messagingServiceSid: messagingServiceSid, 
       to: to,
