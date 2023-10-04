@@ -23,11 +23,11 @@ const Navbar: React.FC<any> = () => {
 
 const Logo: React.FC<any> = () => {
   return (
-    <div className='p-10 flex flex-row items-center justify-center'>
+    <div className='px-2 py-10 flex flex-col 2xl:flex-row items-center justify-center'>
       <div className='w-8 aspect-square relative mx-4'>
         <Image src='/logo.svg' alt='logo' fill/>
       </div>
-      <div className='font-bold text-xl'>
+      <div className='font-bold text-lg 2xl:text-xl'>
         Astro
       </div>
     </div>

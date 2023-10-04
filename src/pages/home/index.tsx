@@ -51,18 +51,18 @@ const HomePage: React.FC<HomePageProps> = (props) => {
       <div className='h-full w-full bg-[#04122D] flex flex-row'>
         <div className='h-full w-full p-10 flex-grow flex flex-col space-y-8'>
           <PageHeader title={'Good Morning, Ty'}/>
-          <div className='w-full flex-grow flex flex-row justify-center items-center space-x-6'>
+          <div className='w-full grow flex flex-row justify-center items-center space-x-6'>
             <TodaySection
-              className='w-[40%]'
+              className=''
               singleBarGraphOptions={kpiMetrics.map((item: notionKPI) => ({
                 maxY: item.goal,
                 value: item.value,
                 title: item.key,
-                yInterval: item.goal / 5,
+                yInterval: item.goal > 5 ? item.goal / 5 : 1,
                 showZero: true
               }))}
             />
-            <GraphsSection className='w-[60%]'/>
+            <GraphsSection className='grow'/>
           </div>
           <div className='w-full max-h-[50%] relative flex'>
             <GoalsTable kpiMetrics={kpiMetrics} onKpiUpdated={onGoalsTableKpiUpdated}/>
@@ -110,24 +110,21 @@ interface TodaySectionProps {
 }
 
 const TodaySection: React.FC<TodaySectionProps> = (props) => {
-
-
-
   return (
     <div className={`flex flex-col h-full space-y-2 ${props.className ?? ''}`}>
       <div className='text-base font-bold font-white w-full'>
         Today
       </div>
-      <div className='flex flex-row flex-grow w-full space-x-4'>
-        <div className='flex flex-grow h-full'>
+      <div className='flex flex-row flex-grow w-full xl:space-x-6'>
+        <div className='flex grow h-full transition-all'>
           <SingleBarGraph options={props.singleBarGraphOptions} />
         </div>
-        <div className='flex flex-grow flex-col h-full space-y-4'>
+        <div className='flex grow flex-col h-full space-y-4'>
           <div className='flex-grow w-full'>
-            <TimeDisplay time={'45:00'} title='Current Task'/>
+            <TimeDisplay className='hidden xl:flex' time={'45:00'} title='Current Task'/>
           </div>
           <div className='flex-grow w-full'>
-            <TimeDisplay time={'2 hr 34 min'} title={'Time Working'}/>
+            <TimeDisplay className='hidden xl:flex' time={'2:34'} title={'Time Working'}/>
           </div>
         </div>
       </div>

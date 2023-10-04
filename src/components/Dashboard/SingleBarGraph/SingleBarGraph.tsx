@@ -14,9 +14,6 @@ export type SingleBarGraphOption = {
 }
 
 const SingleBarGraph: React.FC<SingleBarGraphProps> = (props) => {
-
-
-
   const [selectedOptionTitle, setSelectedOptionTitle] = React.useState<string>(props.options?.[0]?.title ?? '')
   const [showOptionsDropdown, setShowOptionsDropdown] = React.useState<boolean>(false)
   
@@ -159,22 +156,21 @@ const SingleBarGraph: React.FC<SingleBarGraphProps> = (props) => {
   }
 
   return (
-    <DashboardComponent className='flex flex-col justify-end py-8 px-10'>
+    <DashboardComponent className='flex flex-col justify-end py-8 px-10 transition-all'>
       <button onClick={() => setShowOptionsDropdown(false)}className={`${showOptionsDropdown ? '' : 'hidden'} bg-transparet h-screen w-screen absolute z-10 top-0 left-0`}/>
       <div className='flex-grow flex flex-row w-full space-x-8 items-end'>
-        <div className='w-4 h-full flex flex-col justify-between text-sm'>
+        <div className='flex-grow h-full flex flex-col justify-between text-sm'>
           { getYAxisNumbers() } 
           { getSelectedOption()?.showZero && <div className='text-slate-500 font-semibold'>0</div> }
         </div>
-        <div className={`transition-all duration-500 w-full ${percentageHeightClasses[getCurrentOptionHeightPercentage()]} bg-[#41C666] rounded`}>
-        </div>
+        <div className={`transition-all duration-500 w-full max-w-[70px] ${percentageHeightClasses[getCurrentOptionHeightPercentage()]} bg-[#41C666] rounded`} />
         {/* Add an element just for spacing here */}
-        <div className='w-4 h-full'>
+        <div className='flex-grow h-full'>
 
         </div>
       </div>
-      <div className='flex flex-row w-full pt-4 relative justify-center items-center'>
-        <button onClick={handleTitleClicked} className={`w-[80%] whitespace-nowrap transition-all duration-200 hover:scale-95 hover:bg-[#474764] p-2 ${showOptionsDropdown ? 'bg-[#474764] scale-95' : 'bg-[#04122D80]'} rounded font-bold px-4`}>
+      <div className='flex flex-row pt-4 relative transition-all justify-center items-center'>
+        <button onClick={handleTitleClicked} className={`w-full whitespace-nowrap transition-all duration-200 hover:scale-95 hover:bg-[#474764] p-2 ${showOptionsDropdown ? 'bg-[#474764] scale-95' : 'bg-[#04122D80]'} rounded font-bold px-4`}>
           {getSelectedOption()?.title}
         </button>
         <DropdownBox 

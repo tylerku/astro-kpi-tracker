@@ -35,6 +35,7 @@ const RefreshPage: React.FC<RefreshPageProps> = (props) => {
       router.push(props.successRedirect)
     } else {
       console.log('There was an error refreshing the access token')
+      router.push('/auth/logout')
     }
   }
 

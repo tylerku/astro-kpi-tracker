@@ -56,7 +56,7 @@ const CallbackPage: React.FC = () => {
   };
 
   return (
-    <div className='mt-20 w-full flex flex-col'>
+    <div className='pt-20 w-full min-h-screen flex flex-col bg-[#04122D]'>
       <h1 className='my-20 text-xl text-center justify-center'>Loading your Astro KPI dashboard...</h1>
       <RingLoader
         color={'#ffffff'}
