@@ -174,7 +174,7 @@ const SingleBarGraph: React.FC<SingleBarGraphProps> = (props) => {
           {getSelectedOption()?.title}
         </button>
         <DropdownBox 
-          className={`transition transform-gpu duration-200 origin-top-left ${showOptionsDropdown ? 'scale-100 opacity-100' : 'opacity-0 scale-80'} z-20 absolute left-[10%] top-[100%] p-2`}
+          className={`transition transform-gpu duration-200 origin-top-left ${showOptionsDropdown ? 'scale-100 opacity-100' : 'opacity-0 scale-80'} z-20 absolute left-0 top-[100%] p-2`}
           options={props.options}
           onOptionClicked={handleDropdownOptionClicked}
           selectedOptionIndex={props.options.findIndex((option: SingleBarGraphOption) => option.title === selectedOptionTitle)}
