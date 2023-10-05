@@ -11,7 +11,7 @@ import { GaxiosPromise } from "googleapis/build/src/apis/abusiveexperiencereport
 import { init } from "next/dist/compiled/@vercel/og/satori";
 import { MoonLoader } from "react-spinners";
 import {PageWrapper, GoalsTable} from '../../components'
-import { SingleBarGraph, BarGraph, TimeDisplay, SingleBarGraphOption } from "../../components/Dashboard";
+import { SingleBarGraph, BarGraph, TimeDisplay, SingleBarGraphOption, BarGraphOption } from "../../components/Dashboard";
 import notionAPIService, { notionKPI } from "../../services/NotionAPIService";
 
 interface HomePageProps {
@@ -53,7 +53,7 @@ const HomePage: React.FC<HomePageProps> = (props) => {
           <PageHeader title={'Good Morning, Ty'}/>
           <div className='w-full grow flex flex-row justify-center items-center space-x-6'>
             <TodaySection
-              className=''
+              className='shrink lg:grow'
               singleBarGraphOptions={kpiMetrics.map((item: notionKPI) => ({
                 maxY: item.goal,
                 value: item.value,
@@ -62,13 +62,13 @@ const HomePage: React.FC<HomePageProps> = (props) => {
                 showZero: true
               }))}
             />
-            <GraphsSection className='grow'/>
+            <GraphsSection className='grow-2 lg:grow-3' options={[]}/>
           </div>
           <div className='w-full max-h-[50%] relative flex'>
             <GoalsTable kpiMetrics={kpiMetrics} onKpiUpdated={onGoalsTableKpiUpdated}/>
           </div>
         </div>
-        <div className='h-full w-[25%] bg-[#212046] max-w-[400px]'>
+        <div className='hidden xl:flex h-full w-[25%] bg-[#212046] max-w-[400px]'>
         </div>
       </div>
     </PageWrapper>
@@ -115,16 +115,16 @@ const TodaySection: React.FC<TodaySectionProps> = (props) => {
       <div className='text-base font-bold font-white w-full'>
         Today
       </div>
-      <div className='flex flex-row flex-grow w-full xl:space-x-6'>
-        <div className='flex grow h-full transition-all'>
+      <div className='flex flex-row grow w-full lg:space-x-6'>
+        <div className='flex h-full transition-all'>
           <SingleBarGraph options={props.singleBarGraphOptions} />
         </div>
         <div className='flex grow flex-col h-full space-y-4'>
-          <div className='flex-grow w-full'>
-            <TimeDisplay className='hidden xl:flex' time={'45:00'} title='Current Task'/>
+          <div className='grow w-full'>
+            <TimeDisplay className='hidden lg:flex' time={'45:00'} title='Current Task'/>
           </div>
-          <div className='flex-grow w-full'>
-            <TimeDisplay className='hidden xl:flex' time={'2:34'} title={'Time Working'}/>
+          <div className='grow w-full'>
+            <TimeDisplay className='hidden lg:flex' time={'2:34'} title={'Time Working'}/>
           </div>
         </div>
       </div>
@@ -134,12 +134,31 @@ const TodaySection: React.FC<TodaySectionProps> = (props) => {
 
 interface GraphsSectionProps {
   className: string
+  options: BarGraphOption[]
+
 }
 
 const GraphsSection: React.FC<GraphsSectionProps> = (props) => {
   return (
     <div className={`h-full ${props.className ?? ''}`}>
-      <BarGraph />
+      <BarGraph options={
+        [
+          {
+            title: 'Offers Made',
+            data: [
+              {title: 'Mon', value: 10},
+              {title: 'Tue', value: 6},
+              {title: 'Wed', value: 0},
+              {title: 'Thu', value: 1},
+              {title: 'Fri', value: 8},
+              {title: 'Sat', value: 9},
+            ],
+            maxY: 10,
+            yInterval: 2,
+            showZero: true
+          }
+        ]
+      }/>
     </div>
   )
 }

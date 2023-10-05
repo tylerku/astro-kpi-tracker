@@ -1,6 +1,6 @@
 import SingleBarGraph, { SingleBarGraphOption } from "./SingleBarGraph"
-import BarGraph from './BarGraph'
+import BarGraph, { BarGraphOption } from './BarGraph'
 import TimeDisplay from './TimeDisplay'
 
-export type { SingleBarGraphOption }
+export type { SingleBarGraphOption, BarGraphOption }
 export { SingleBarGraph, BarGraph, TimeDisplay }
