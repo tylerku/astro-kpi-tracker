@@ -1,5 +1,6 @@
 import {Client} from '@notionhq/client';
 import { DatabaseObjectResponse, PageObjectResponse } from '@notionhq/client/build/src/api-endpoints';
+import moment from 'moment';
 
 export type notionKPI = {
   key: string,
@@ -19,7 +20,7 @@ class NotionAPIService {
   getTodaysKPIs = async (kpiNames: string[], kpiGoals: Record<string, number>): Promise<notionKPI[]> => {
     try {
       const notionDatabaseId = process.env.NOTION_KPI_DB_ID ?? '';
-      const todayDate = new Date().toISOString().split('T')[0];
+      const today = moment().format('YYYY-MM-DD');
       const response = await this.notionSDK.databases.query({
         database_id: notionDatabaseId,
         filter: {
@@ -27,7 +28,7 @@ class NotionAPIService {
             {
               property: 'Date',
               date: {
-                equals: todayDate,
+                equals: today,
               },
             }
           ],
@@ -55,8 +56,7 @@ class NotionAPIService {
 
   updateTodaysKPI = async (kpiName: string, kpiValue: number) => {
     const notionDatabaseId = process.env.NOTION_KPI_DB_ID ?? '';
-    const todayDate = new Date().toISOString().split('T')[0];
-
+    const today = moment().format('YYYY-MM-DD'); 
     const response = await this.notionSDK.databases.query({
       database_id: notionDatabaseId,
       filter: {
@@ -64,7 +64,7 @@ class NotionAPIService {
           {
             property: 'Date',
             date: {
-              equals: todayDate,
+              equals: today,
             },
           }
         ],
