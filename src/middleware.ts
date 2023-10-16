@@ -21,6 +21,7 @@ export function middleware(request: NextRequest) {
 
   // If the user has a refresh token, redirect to the refresh page
   if (refreshToken) {
+    console.log('redirecting to auth/refresh')
     const nextResponse = NextResponse.redirect(`${request.nextUrl.protocol}//${request.nextUrl.host}/auth/refresh?redirectPath=${request.nextUrl.pathname}`)
     return nextResponse
   }
@@ -29,5 +30,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/home/:path*', '/about/:path*'],
+  matcher: ['/home/:path*', '/about/:path*']
 }

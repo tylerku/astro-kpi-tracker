@@ -15,6 +15,18 @@ module.exports = {
         destination: '/home',
         permanent: true,
       },
+      {
+        source: '/',
+        has: [
+          {
+            type: 'cookie',
+            key: 'refreshToken',
+            value: '.*'
+          }
+        ],
+        destination: '/auth/refresh',
+        permanent: true
+      }
     ]
   }
 }

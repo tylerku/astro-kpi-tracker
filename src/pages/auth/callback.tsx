@@ -11,8 +11,6 @@ import Cookies from 'js-cookie';
 const CallbackPage: React.FC = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
-  const { state, dispatch } = useContext<AuthContextValue>(AuthContext)
-  const [accessToken, setAccessToken] = useState('empty')
 
   useEffect(() => {
     const { code } = router.query;
@@ -32,9 +30,6 @@ const CallbackPage: React.FC = () => {
       })
       .then((response) => response.json())
       .then((data) => {
-        // Handle the response from the server-side callback
-        dispatch({type: 'setAccessToken', value: data.accessToken})
-        // Cookies.set('accessToken', data.accessToken, {expires: 30, sameSite: 'strict', httpOnly: true, path: '/'})
         router.push('/home')
       })
       .catch((error) => {

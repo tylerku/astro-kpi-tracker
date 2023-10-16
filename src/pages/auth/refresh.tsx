@@ -9,7 +9,7 @@ import { GetServerSideProps, GetServerSidePropsContext } from 'next';
 
 interface RefreshPageProps {
   refreshToken: string
-  successRedirect: string
+  successRedirect?: string
 }
 const RefreshPage: React.FC<RefreshPageProps> = (props) => {
   const router = useRouter();
@@ -32,7 +32,7 @@ const RefreshPage: React.FC<RefreshPageProps> = (props) => {
       console.log('data from the refresh request', data)
       dispatch({type: 'setAccessToken', value: data.accessToken})
       console.log('redirecting to', props.successRedirect)
-      router.push(props.successRedirect)
+      router.push(props.successRedirect ?? '/home')
     } else {
       console.log('There was an error refreshing the access token')
       router.push('/auth/logout')
@@ -61,14 +61,18 @@ const RefreshPage: React.FC<RefreshPageProps> = (props) => {
 }
 
 export const getServerSideProps: GetServerSideProps = async (context: GetServerSidePropsContext) => {
-  const successRedirect = context.query.redirectPath
+  const successRedirect = context.query.redirectPath as string ?? undefined
+  console.log('successRedirect: ', successRedirect)
   const cookies = parse(context.req.headers.cookie ?? '')
   const refreshToken = cookies['refreshToken']
+  const props: RefreshPageProps = {
+    refreshToken
+  }
+  if (successRedirect) {
+    props.successRedirect = successRedirect
+  }
   return {
-    props: {
-      refreshToken,
-      successRedirect
-    },
+    props
   };
 };
 
