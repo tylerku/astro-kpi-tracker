@@ -171,6 +171,7 @@ const SingleBarGraph: React.FC<SingleBarGraphProps> = (props) => {
         <DropdownBox 
           className={`transition transform-gpu duration-200 origin-top-left ${showOptionsDropdown ? 'scale-100 opacity-100' : 'opacity-0 scale-80'} z-20 absolute left-0 top-[100%] p-2`}
           options={props.options}
+          disabled={!showOptionsDropdown}
           onOptionClicked={handleDropdownOptionClicked}
           selectedOptionIndex={props.options.findIndex((option: SingleBarGraphOption) => option.title === selectedOptionTitle)}
           />
@@ -184,6 +185,7 @@ interface DropdownBoxProps {
   options: SingleBarGraphOption[]
   selectedOptionIndex: number
   onOptionClicked: (option: SingleBarGraphOption) => void
+  disabled: boolean
 }
 
 const DropdownBox: React.FC<DropdownBoxProps> = (props) => {
@@ -191,7 +193,7 @@ const DropdownBox: React.FC<DropdownBoxProps> = (props) => {
     <div className={`mt-2 flex flex-col rounded bg-[#474764] drop-shadow-lg space-y-2 w-fit text-base space-y-2 ${props.className}`}>
       {props.options?.map((option, index) => {
         return (
-          <button onClick={() => props.onOptionClicked(option)} className={`${props.selectedOptionIndex === index ? 'bg-[#04122D]' : 'bg-transparent'} transition transform-gpu duration-200 whitespace-nowrap ${props.selectedOptionIndex === index ? '' : 'hover:bg-[#04122D80]'} hover:scale-95 p-2 px-4 rounded font-bold`}>
+          <button disabled={props.disabled} onClick={() => props.onOptionClicked(option)} className={`${props.selectedOptionIndex === index ? 'bg-[#04122D]' : 'bg-transparent'} transition transform-gpu duration-200 whitespace-nowrap ${props.selectedOptionIndex === index ? '' : 'hover:bg-[#04122D80]'} hover:scale-95 p-2 px-4 rounded font-bold`}>
             {option.title}
           </button>
         )
