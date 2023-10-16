@@ -31,7 +31,6 @@ const SingleBarGraph: React.FC<SingleBarGraphProps> = (props) => {
     yAxisNumbers.reverse()
     return yAxisNumbers
   }
-  
 
   const handleTitleClicked = () => {
     setShowOptionsDropdown(!showOptionsDropdown)
@@ -41,8 +40,6 @@ const SingleBarGraph: React.FC<SingleBarGraphProps> = (props) => {
     setSelectedOptionTitle(option.title)
     setShowOptionsDropdown(false)
   }
-
-  console.log('singleBarChart props.options: ', props.options)
 
   const percentageHeightClasses: {[key: number]: string} = {
     0: 'h-0',
@@ -165,9 +162,7 @@ const SingleBarGraph: React.FC<SingleBarGraphProps> = (props) => {
         </div>
         <div className={`transition-all duration-500 w-full max-w-[70px] ${percentageHeightClasses[getCurrentOptionHeightPercentage()]} bg-[#41C666] rounded`} />
         {/* Add an element just for spacing here */}
-        <div className='flex-grow h-full'>
-
-        </div>
+        <div className='flex-grow h-full' />
       </div>
       <div className='flex flex-row pt-4 relative transition-all justify-center items-center'>
         <button onClick={handleTitleClicked} className={`w-full whitespace-nowrap transition-all duration-200 hover:scale-95 hover:bg-[#474764] p-2 ${showOptionsDropdown ? 'bg-[#474764] scale-95' : 'bg-[#04122D80]'} rounded font-bold px-4`}>

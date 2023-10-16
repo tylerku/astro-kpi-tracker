@@ -13,20 +13,29 @@ import { MoonLoader } from "react-spinners";
 import {PageWrapper, GoalsTable} from '../../components'
 import { SingleBarGraph, BarGraph, TimeDisplay, SingleBarGraphOption, BarGraphOption } from "../../components/Dashboard";
 import notionAPIService, { notionKPI } from "../../services/NotionAPIService";
+import moment from 'moment'
 
 interface HomePageProps {
-  accessToken: string | null
-  kpiMetrics: notionKPI[]
+  dailyKPIMetrics: notionKPI[]
+  weeklyKPIMetrics: Record<string, notionKPI[]> 
+  serverError?: Error
 }
 const HomePage: React.FC<HomePageProps> = (props) => {
 
   const router = useRouter()
-  const [showLayover, setShowLayover] = useState(false)
-  const [kpiMetrics, setKpiMetrics] = useState<notionKPI[]>(props.kpiMetrics)
+  const [dailyKPIMetrics, setDailyKPIMetrics] = useState<notionKPI[]>(props.dailyKPIMetrics)
+  const [weeklyKPIMetrics, setWeeklyKPIMetrics] = useState<Record<string, notionKPI[]>>(props.weeklyKPIMetrics)
+  const [barGraphOptions, setBarGraphOptions] = useState<BarGraphOption[]>()
 
   useEffect(() => {
-    setKpiMetrics(props.kpiMetrics)
-  }, [props.kpiMetrics])
+    setDailyKPIMetrics(props.dailyKPIMetrics)
+  }, [props.dailyKPIMetrics])
+
+  useEffect(() => {
+    setWeeklyKPIMetrics(props.weeklyKPIMetrics)
+    const newOptions = getBarGraphOptionsFromWeeklyKPIMetrics(props.weeklyKPIMetrics)
+    setBarGraphOptions(newOptions)
+  }, [props.weeklyKPIMetrics])
 
   const logout = async () => {
     try {
@@ -36,14 +45,54 @@ const HomePage: React.FC<HomePageProps> = (props) => {
     }
   }
 
+  const getBarGraphOptionsFromWeeklyKPIMetrics = (weeklyKPIMetrics: Record<string, notionKPI[]>): BarGraphOption[] => {
+    type Weekday = {
+      dayName: string
+      date: string
+    }
+    const monday = moment().startOf('week').add(1, 'days').format('YYYY-MM-DD')
+    const tuesday = moment().startOf('week').add(2, 'days').format('YYYY-MM-DD')
+    const wednesday = moment().startOf('week').add(3, 'days').format('YYYY-MM-DD')
+    const thursday = moment().startOf('week').add(4, 'days').format('YYYY-MM-DD')
+    const friday = moment().startOf('week').add(5, 'days').format('YYYY-MM-DD')
+    const saturday = moment().endOf('week').format('YYYY-MM-DD')
+    const weekdays: Weekday[] = [{dayName: 'Mon', date: monday}, {dayName: 'Tue', date: tuesday}, {dayName: 'Wed', date: wednesday}, {dayName: 'Thur', date: thursday}, {dayName: 'Fri', date: friday}, {dayName: 'Sat', date: saturday}]
+    const barGraphOptions: BarGraphOption[] = []
+    weekdays.forEach((weekday) => {
+      weeklyKPIMetrics[weekday.date]?.forEach(kpi => {
+        if (barGraphOptions.find(val => val.title === kpi.key) === undefined) {
+          barGraphOptions.push({
+            title: kpi.key,
+            maxY: kpi.goal,
+            yInterval: kpi.goal > 5 ? kpi.goal / 5 : 1,
+            showZero: true,
+            data: [
+              {
+                title: weekday.dayName,
+                value: kpi.value
+              }
+            ]
+          })
+        } else {
+          const index = barGraphOptions.findIndex(val => val.title === kpi.key)
+          barGraphOptions[index].data.push({
+            title: weekday.dayName,
+            value: kpi.value
+          })
+        }
+      })
+    })
+    return barGraphOptions
+  }
+
   const onGoalsTableKpiUpdated = (kpi: notionKPI) => {
-    const updatedKpiMetrics = kpiMetrics.map((item: notionKPI) => {
+    const updatedDailyKPIMetrics = dailyKPIMetrics.map((item: notionKPI) => {
       if (item.key === kpi.key) {
         return kpi
       }
       return item
     })
-    setKpiMetrics(updatedKpiMetrics)
+    setDailyKPIMetrics(updatedDailyKPIMetrics)
   }
 
   return (
@@ -54,7 +103,7 @@ const HomePage: React.FC<HomePageProps> = (props) => {
           <div className='w-full grow flex flex-row justify-center items-center space-x-6'>
             <TodaySection
               className='shrink lg:grow'
-              singleBarGraphOptions={kpiMetrics.map((item: notionKPI) => ({
+              singleBarGraphOptions={dailyKPIMetrics.map((item: notionKPI) => ({
                 maxY: item.goal,
                 value: item.value,
                 title: item.key,
@@ -62,10 +111,10 @@ const HomePage: React.FC<HomePageProps> = (props) => {
                 showZero: true
               }))}
             />
-            <GraphsSection className='grow-2 lg:grow-3' options={[]}/>
+            <GraphsSection className='grow-2 lg:grow-3' options={barGraphOptions ?? []} />
           </div>
           <div className='w-full max-h-[50%] relative flex'>
-            <GoalsTable kpiMetrics={kpiMetrics} onKpiUpdated={onGoalsTableKpiUpdated}/>
+            <GoalsTable kpiMetrics={dailyKPIMetrics} onKpiUpdated={onGoalsTableKpiUpdated}/>
           </div>
         </div>
         <div className='hidden xl:flex h-full w-[25%] bg-[#212046] max-w-[400px]'>
@@ -135,30 +184,12 @@ const TodaySection: React.FC<TodaySectionProps> = (props) => {
 interface GraphsSectionProps {
   className: string
   options: BarGraphOption[]
-
 }
 
 const GraphsSection: React.FC<GraphsSectionProps> = (props) => {
   return (
     <div className={`h-full ${props.className ?? ''}`}>
-      <BarGraph options={
-        [
-          {
-            title: 'Offers Made',
-            data: [
-              {title: 'Mon', value: 10},
-              {title: 'Tue', value: 6},
-              {title: 'Wed', value: 0},
-              {title: 'Thu', value: 1},
-              {title: 'Fri', value: 8},
-              {title: 'Sat', value: 9},
-            ],
-            maxY: 10,
-            yInterval: 2,
-            showZero: true
-          }
-        ]
-      }/>
+      <BarGraph options={props.options}/>
     </div>
   )
 }
@@ -166,10 +197,23 @@ const GraphsSection: React.FC<GraphsSectionProps> = (props) => {
 export const getServerSideProps = async () => {
   const kpiNames: string[] = ["Offers Made", "Agent Conversations", "Buyers Found"]
   const kpiGoals: Record<string, number> = { [kpiNames[0]]: 5, [kpiNames[1]]: 50, [kpiNames[2]]: 2 }
-  const kpiMetrics = await notionAPIService.getTodaysKPIs(kpiNames, kpiGoals)
-  return {
-    props: {
-      kpiMetrics 
+  try {
+    const dailyMetricsPromise = notionAPIService.getTodaysKPIs(kpiNames, kpiGoals)
+    const weeklyMetricsPromise = notionAPIService.getThisWeeksKPIs(kpiNames, kpiGoals)
+    const values = await Promise.all([dailyMetricsPromise, weeklyMetricsPromise])
+    const dailyKPIMetrics = values[0]
+    const weeklyKPIMetrics = values[1]
+    return {
+      props: {
+        dailyKPIMetrics,
+        weeklyKPIMetrics
+      }
+    }
+  } catch(error) {
+    return {
+      props: {
+        serverError: error 
+      }
     }
   }
 }
