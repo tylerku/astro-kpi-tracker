@@ -7,10 +7,10 @@ import { access } from "fs";
 
 export default async (req: NextApiRequest, res: NextApiResponse): Promise<void> => {
   const getMessageBody = async () => {
-    const kpiNames = ['Offers Made', 'Agent Conversations', 'Buyers Found']
-    const goals = { 'Offers Made': 5, 'Agent Conversations': 50, 'Buyers Found': 2}
+    const kpiNames = ['Verbal Offers', 'Written Offers', 'Agent Conversations', 'Buyers Called']
+    const goals = { 'Verbal Offers': 10, 'Written Offers': 2, 'Agent Conversations': 50, 'Buyers Called': 5}
     const kpis = await notionAPIService.getTodaysKPIs(kpiNames, goals)
-    return `Ty's day today:\n\nOffers Made: ${kpis.find((kpi) => kpi.key === 'Offers Made')?.value ?? 0}/${goals['Offers Made']}\nAgent Conversations: ${kpis.find((kpi) => kpi.key === 'Agent Conversations')?.value ?? 0}/${goals['Agent Conversations']}\nBuyers Found: ${kpis.find((kpi) => kpi.key === 'Buyers Found')?.value ?? 0}/${goals['Buyers Found']}\n\nTell Ty he's freaking sick`
+    return `Ty's day today:\n\nOffers Made: ${kpis.find((kpi) => kpi.key === 'Verbal Offers')?.value ?? 0}/${goals['Verbal Offers']}\nWritten Offers: ${kpis.find((kpi) => kpi.key === 'Written Offers')?.value ?? 0}/${goals['Written Offers']}\nAgent Conversations: ${kpis.find((kpi) => kpi.key === 'Agent Conversations')?.value ?? 0}/${goals['Agent Conversations']}\nBuyers Found: ${kpis.find((kpi) => kpi.key === 'Buyers Found')?.value ?? 0}/${goals['Buyers Found']}\n\nTell Ty he's freaking sick`
   }
   try {
     const accountSid = process.env.ASTRO_TWILIO_ACCOUNT_SID;
