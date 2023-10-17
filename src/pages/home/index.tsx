@@ -195,8 +195,8 @@ const GraphsSection: React.FC<GraphsSectionProps> = (props) => {
 }
 
 export const getServerSideProps = async () => {
-  const kpiNames: string[] = ["Offers Made", "Agent Conversations", "Buyers Found"]
-  const kpiGoals: Record<string, number> = { [kpiNames[0]]: 5, [kpiNames[1]]: 50, [kpiNames[2]]: 2 }
+  const kpiNames: string[] = ["Verbal Offers", "Written Offers", "Agent Conversations", "Buyers Called"]
+  const kpiGoals: Record<string, number> = { [kpiNames[0]]: 10, [kpiNames[1]]: 2, [kpiNames[2]]: 50, [kpiNames[3]]: 5 }
   try {
     const dailyMetricsPromise = notionAPIService.getTodaysKPIs(kpiNames, kpiGoals)
     const weeklyMetricsPromise = notionAPIService.getThisWeeksKPIs(kpiNames, kpiGoals)

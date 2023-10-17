@@ -242,13 +242,19 @@ const ProgressBar:React.FC<ProgressBarProps> = (props) => {
     100: 'w-[100%]',
   }
 
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     // const percentage = ((props.current / props.goal) * 100) > 100 ? 100 : ((props.current / props.goal) * 100)
+  //     const percentage = Math.round(((props.current / props.goal) + Number.EPSILON) * 100)
+  //     const safePercentage = percentage > 100 ? 100 : percentage
+  //     setProgressPercentage(safePercentage)
+  //   }, props.animationDelay ?? 500)
+  // }, [])
+
   useEffect(() => {
-    setTimeout(() => {
-      // const percentage = ((props.current / props.goal) * 100) > 100 ? 100 : ((props.current / props.goal) * 100)
-      const percentage = Math.round(((props.current / props.goal) + Number.EPSILON) * 100)
-      const safePercentage = percentage > 100 ? 100 : percentage
-      setProgressPercentage(safePercentage)
-    }, props.animationDelay ?? 500)
+    const percentage = Math.round(((props.current / props.goal) + Number.EPSILON) * 100)
+    const safePercentage = percentage > 100 ? 100 : percentage
+    setProgressPercentage(safePercentage)  
   }, [props.current, props.goal])
 
   return (

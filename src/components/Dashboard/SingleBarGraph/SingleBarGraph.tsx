@@ -152,6 +152,23 @@ const SingleBarGraph: React.FC<SingleBarGraphProps> = (props) => {
     return safePercentage
   }
 
+  const getBarBackgroundColor = () => {
+    const backgroundColors = {
+      green: 'bg-[#41C666]',
+      red: 'bg-[#C64141]',
+      orange: 'bg-[#C67141]',
+      yellow: 'bg-[#C6C041]',
+    }
+    const option = getSelectedOption()
+    const barValue = option?.value ?? 0
+    const max = option?.maxY ?? 1
+    console.log('bar completion percentage: ', max)
+    if (barValue >= max) return backgroundColors['green']
+    if (barValue >= max * .50) return backgroundColors['yellow']
+    if (barValue >= max * 0.06) return backgroundColors['orange']
+    return backgroundColors['red']
+  }
+
   return (
     <DashboardComponent className='flex flex-col justify-end py-8 px-10 transition-all'>
       <button onClick={() => setShowOptionsDropdown(false)}className={`${showOptionsDropdown ? '' : 'hidden'} bg-transparet h-screen w-screen absolute z-10 top-0 left-0`}/>
@@ -160,7 +177,7 @@ const SingleBarGraph: React.FC<SingleBarGraphProps> = (props) => {
           { getYAxisNumbers() } 
           { getSelectedOption()?.showZero && <div className='text-slate-500 font-semibold'>0</div> }
         </div>
-        <div className={`transition-all duration-500 w-full max-w-[70px] ${percentageHeightClasses[getCurrentOptionHeightPercentage()]} bg-[#41C666] rounded`} />
+        <div className={`transition-all duration-500 w-full max-w-[70px] ${percentageHeightClasses[getCurrentOptionHeightPercentage() ? getCurrentOptionHeightPercentage() : 6]} ${getBarBackgroundColor()} rounded`} />
         {/* Add an element just for spacing here */}
         <div className='flex-grow h-full' />
       </div>
