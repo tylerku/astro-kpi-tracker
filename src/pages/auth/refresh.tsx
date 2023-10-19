@@ -14,7 +14,6 @@ interface RefreshPageProps {
 const RefreshPage: React.FC<RefreshPageProps> = (props) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
-  const { state, dispatch } = useContext<AuthContextValue>(AuthContext)
 
   useEffect(() => {
     refreshAccessToken();
@@ -29,10 +28,10 @@ const RefreshPage: React.FC<RefreshPageProps> = (props) => {
     if(response.ok) {
       console.log('The refresh request was successful')
       const data = await response.json()
+      const redirectLocation = props.successRedirect ?? '/home'
       console.log('data from the refresh request', data)
-      dispatch({type: 'setAccessToken', value: data.accessToken})
-      console.log('redirecting to', props.successRedirect)
-      router.push(props.successRedirect ?? '/home')
+      console.log('redirecting to', redirectLocation)
+      router.push(redirectLocation)
     } else {
       console.log('There was an error refreshing the access token')
       router.push('/auth/logout')
