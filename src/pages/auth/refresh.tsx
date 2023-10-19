@@ -28,10 +28,10 @@ const RefreshPage: React.FC<RefreshPageProps> = (props) => {
     if(response.ok) {
       console.log('The refresh request was successful')
       const data = await response.json()
-      const redirectLocation = props.successRedirect ?? encodeURIComponent('/home')
+      const redirectLocation = props.successRedirect ?? '/home'
       console.log('data from the refresh request', data)
       console.log('redirecting to', redirectLocation)
-      router.push(redirectLocation)
+      router.replace(redirectLocation)
     } else {
       console.log('There was an error refreshing the access token')
       router.push(encodeURIComponent('/auth/logout'))
