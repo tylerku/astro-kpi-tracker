@@ -15,7 +15,6 @@ const MyApp = ({ Component, pageProps }: any) => {
     } else {
       setIsLoginRoute(false)
     }
-    console.log('route: ', router.pathname)
   }, [router.pathname])
 
   return (

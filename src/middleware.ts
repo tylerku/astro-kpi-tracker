@@ -13,6 +13,8 @@ export function middleware(request: NextRequest) {
 
   const accessToken = request.cookies.get('accessToken')?.value
   const refreshToken = request.cookies.get('refreshToken')?.value
+  console.log('accessToken cookie: ', accessToken)
+  console.log('refreshToken cookie: ', refreshToken)
 
   // If the user has an access token and it's not expired, allow the request
   if (accessToken && !isAccessTokenExpired()) {
