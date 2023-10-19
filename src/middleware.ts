@@ -13,6 +13,8 @@ export function middleware(request: NextRequest) {
 
   const accessToken = request.cookies.get('accessToken')?.value
   const refreshToken = request.cookies.get('refreshToken')?.value
+  const cookies = request.cookies.toString()
+  console.log('cookies: ', cookies)
   console.log('accessToken cookie: ', accessToken)
   console.log('refreshToken cookie: ', refreshToken)
 

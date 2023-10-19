@@ -32,7 +32,6 @@ export default async (req: NextApiRequest, res: NextApiResponse): Promise<void> 
       sameSite: 'strict',
       httpOnly: true,
     });
-    console.log('got here 4')
     cookies(req, res).set('refreshToken', refreshToken, {
       path: '/',
       expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365),
