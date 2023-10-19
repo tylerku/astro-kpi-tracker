@@ -20,21 +20,27 @@ const RefreshPage: React.FC<RefreshPageProps> = (props) => {
   }, [])
 
   const refreshAccessToken = async () => {
-    const response = await fetch(`/api/auth/refresh`, {
-      headers: {
-        'Authorization': `Bearer ${props.refreshToken}`
-      }
-    })
-    if(response.ok) {
-      console.log('The refresh request was successful')
-      const data = await response.json()
-      const redirectLocation = props.successRedirect ?? '/home'
-      console.log('data from the refresh request', data)
-      console.log('redirecting to', redirectLocation)
-      router.replace(redirectLocation)
-    } else {
-      console.log('There was an error refreshing the access token')
-      router.push(encodeURIComponent('/auth/logout'))
+    try {
+      const response = await fetch(`/api/auth/refresh`, {
+        headers: {
+          'Authorization': `Bearer ${props.refreshToken}`
+        }
+      })
+      if(response.ok) {
+        console.log('The refresh request was successful')
+        const data = await response.json()
+        const redirectLocation = props.successRedirect ?? '/home'
+        console.log('data from the refresh request', data)
+        console.log('redirecting to', redirectLocation)
+        setTimeout(() => {
+          router.replace(redirectLocation)
+        }, 5000)
+      } else {
+        console.log('There was an error refreshing the access token')
+        router.push('/auth/logout')
+      } 
+    } catch(error) {
+      console.log('Error with /api/auth/refresh endpoint: ', error)
     }
   }
 
@@ -64,6 +70,7 @@ export const getServerSideProps: GetServerSideProps = async (context: GetServerS
   const successRedirect = context.query.redirectPath as string ?? undefined
   console.log('successRedirect: ', successRedirect)
   const cookies = parse(context.req.headers.cookie ?? '')
+
   const refreshToken = cookies['refreshToken']
   const props: RefreshPageProps = {
     refreshToken
