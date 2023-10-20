@@ -1,19 +1,13 @@
 import { useRouter } from "next/router";
-import { CSSProperties, useState } from "react";
-import { AuthContext } from "../../context";
-import React, { useContext, useEffect } from "react";
-import axios, { AxiosResponse } from 'axios'
-import { redirect } from "next/dist/server/api-utils";
-import {google, GoogleApis} from 'googleapis'
-import incrementCell from "../api/googleSheets/incrementCell";
-import { StringLiteral } from "typescript";
-import { GaxiosPromise } from "googleapis/build/src/apis/abusiveexperiencereport";
-import { init } from "next/dist/compiled/@vercel/og/satori";
-import { MoonLoader } from "react-spinners";
+import { GetServerSideProps, GetServerSidePropsContext } from "next";
+import { useState } from "react";
+import React, { useEffect } from "react";
 import {PageWrapper, GoalsTable} from '../../components'
 import { SingleBarGraph, BarGraph, TimeDisplay, SingleBarGraphOption, BarGraphOption } from "../../components/Dashboard";
 import notionAPIService, { notionKPI } from "../../services/NotionAPIService";
 import moment from 'moment'
+import { parse } from "cookie";
+import { getServerSideAuthorization } from '../../utils/auth'
 
 interface HomePageProps {
   dailyKPIMetrics: notionKPI[]
@@ -194,15 +188,21 @@ const GraphsSection: React.FC<GraphsSectionProps> = (props) => {
   )
 }
 
-export const getServerSideProps = async () => {
+export const getServerSideProps: GetServerSideProps = async (context: GetServerSidePropsContext) => {
   const kpiNames: string[] = ["Verbal Offers", "Written Offers", "Agent Conversations", "Buyers Called"]
   const kpiGoals: Record<string, number> = { [kpiNames[0]]: 10, [kpiNames[1]]: 2, [kpiNames[2]]: 50, [kpiNames[3]]: 5 }
+  
+  const redirectObject = getServerSideAuthorization(context)
+  if (redirectObject) {
+    return redirectObject
+  }
+
   try {
     const dailyMetricsPromise = notionAPIService.getTodaysKPIs(kpiNames, kpiGoals)
     const weeklyMetricsPromise = notionAPIService.getThisWeeksKPIs(kpiNames, kpiGoals)
     const values = await Promise.all([dailyMetricsPromise, weeklyMetricsPromise])
-    const dailyKPIMetrics = values[0]
-    const weeklyKPIMetrics = values[1]
+    const dailyKPIMetrics = values[0] ?? []
+    const weeklyKPIMetrics = values[1] ?? []
     return {
       props: {
         dailyKPIMetrics,

@@ -32,9 +32,7 @@ const RefreshPage: React.FC<RefreshPageProps> = (props) => {
         const redirectLocation = props.successRedirect ?? '/home'
         console.log('data from the refresh request', data)
         console.log('redirecting to', redirectLocation)
-        setTimeout(() => {
-          router.replace(redirectLocation)
-        }, 5000)
+        router. replace(redirectLocation) // WARNING: This request is not using the current cookies, but the old ones
       } else {
         console.log('There was an error refreshing the access token')
         router.push('/auth/logout')
