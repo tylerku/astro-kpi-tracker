@@ -20,6 +20,7 @@ class NotionAPIService {
   getTodaysKPIs = async (kpiNames: string[], kpiGoals: Record<string, number>): Promise<notionKPI[]> => {
     try {
       const notionDatabaseId = process.env.NOTION_KPI_DB_ID ?? '';
+      moment.tz.setDefault('America/Denver')
       const today = moment().format('YYYY-MM-DD');
       const response = await this.notionSDK.databases.query({
         database_id: notionDatabaseId,
@@ -98,6 +99,7 @@ class NotionAPIService {
 
   updateTodaysKPI = async (kpiName: string, kpiValue: number) => {
     const notionDatabaseId = process.env.NOTION_KPI_DB_ID ?? '';
+    moment.tz.setDefault('America/Denver')
     const today = moment().format('YYYY-MM-DD'); 
     const response = await this.notionSDK.databases.query({
       database_id: notionDatabaseId,
@@ -114,14 +116,11 @@ class NotionAPIService {
     });
 
     const page = response.results[0] as PageObjectResponse
-    const property = page.properties[`${kpiName}`];
-
     const updatedProperties = {
       [kpiName]: {
         number: kpiValue,
       }
     }
-    console.log('updatedProperties: ', updatedProperties)
     const updateResponse = await this.notionSDK.pages.update({
       page_id: page.id,
       properties: updatedProperties

@@ -5,7 +5,7 @@ import React, { useEffect } from "react";
 import {PageWrapper, GoalsTable} from '../../components'
 import { SingleBarGraph, BarGraph, TimeDisplay, SingleBarGraphOption, BarGraphOption } from "../../components/Dashboard";
 import notionAPIService, { notionKPI } from "../../services/NotionAPIService";
-import moment from 'moment'
+import moment from 'moment-timezone'
 import { parse } from "cookie";
 import { getServerSideAuthorization } from '../../utils/auth'
 
