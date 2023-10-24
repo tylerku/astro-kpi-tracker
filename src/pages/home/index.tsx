@@ -190,7 +190,7 @@ const GraphsSection: React.FC<GraphsSectionProps> = (props) => {
 
 export const getServerSideProps: GetServerSideProps = async (context: GetServerSidePropsContext) => {
   const kpiNames: string[] = ["Verbal Offers", "Written Offers", "Agent Conversations", "Buyers Called"]
-  const kpiGoals: Record<string, number> = { [kpiNames[0]]: 12, [kpiNames[1]]: 2, [kpiNames[2]]: 50, [kpiNames[3]]: 5 }
+  const kpiGoals: Record<string, number> = { [kpiNames[0]]: 10, [kpiNames[1]]: 2, [kpiNames[2]]: 50, [kpiNames[3]]: 5 }
   
   const redirectObject = getServerSideAuthorization(context)
   if (redirectObject) {
