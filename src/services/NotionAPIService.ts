@@ -99,7 +99,6 @@ class NotionAPIService {
 
   updateTodaysKPI = async (kpiName: string, kpiValue: number) => {
     const notionDatabaseId = process.env.NOTION_KPI_DB_ID ?? '';
-    moment.tz.setDefault('America/Denver')
     const today = moment().format('YYYY-MM-DD'); 
     const response = await this.notionSDK.databases.query({
       database_id: notionDatabaseId,
