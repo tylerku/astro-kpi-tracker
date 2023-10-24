@@ -8,7 +8,7 @@ import { access } from "fs";
 export default async (req: NextApiRequest, res: NextApiResponse): Promise<void> => {
   const getMessageBody = async () => {
     const kpiNames = ['Verbal Offers', 'Written Offers', 'Agent Conversations', 'Buyers Called']
-    const goals = { 'Verbal Offers': 10, 'Written Offers': 2, 'Agent Conversations': 50, 'Buyers Called': 5}
+    const goals = { 'Verbal Offers': 12, 'Written Offers': 2, 'Agent Conversations': 50, 'Buyers Called': 5}
     const kpis = await notionAPIService.getTodaysKPIs(kpiNames, goals)
     return `Ty's day today:\n\nOffers Made: ${kpis.find((kpi) => kpi.key === 'Verbal Offers')?.value ?? 0}/${goals['Verbal Offers']}\nWritten Offers: ${kpis.find((kpi) => kpi.key === 'Written Offers')?.value ?? 0}/${goals['Written Offers']}\nAgent Conversations: ${kpis.find((kpi) => kpi.key === 'Agent Conversations')?.value ?? 0}/${goals['Agent Conversations']}\nBuyers Found: ${kpis.find((kpi) => kpi.key === 'Buyers Found')?.value ?? 0}/${goals['Buyers Called']}\n\nTell Ty he's freaking sick`
   }
