@@ -1,9 +1,12 @@
 import React, {useEffect, useState} from "react";
 import App from "next/app";
 import './globals.css';
-import {AuthContextProvider} from '../context';
 import {Navbar} from "../components";
 import { useRouter } from "next/router";
+import { Provider } from 'react-redux';
+import { store, persistor } from '../store';
+import { PersistGate } from 'redux-persist/integration/react'
+
 
 const MyApp = ({ Component, pageProps }: any) => {
   const router = useRouter()
@@ -18,14 +21,16 @@ const MyApp = ({ Component, pageProps }: any) => {
   }, [router.pathname])
 
   return (
-    <AuthContextProvider>
-      <div className='flex'>
-        { !isLoginRoute && <Navbar /> }
-        <div className={`${isLoginRoute ? 'w-full' : 'w-[88%]'}`}>
-          <Component {...pageProps} />
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <div className='flex'>
+          { !isLoginRoute && <Navbar /> }
+          <div className={`${isLoginRoute ? 'w-full' : 'w-[88%]'}`}>
+            <Component {...pageProps} />
+          </div>
         </div>
-      </div>
-    </AuthContextProvider>
+      </PersistGate>
+    </Provider>
   );
 };
 

@@ -9,6 +9,7 @@ import moment from 'moment-timezone'
 import { parse } from "cookie";
 import { getServerSideAuthorization } from '../../utils/auth'
 import timeBlockService from '../../services/TimeBlockService'
+import Counter from "@/components/Counter";
 
 interface HomePageProps {
   dailyKPIMetrics: notionKPI[]
@@ -165,7 +166,8 @@ const TodaySection: React.FC<TodaySectionProps> = (props) => {
         </div>
         <div className='flex grow flex-col h-full space-y-4'>
           <div className='grow w-full'>
-            <TimeDisplay className='hidden lg:flex' time={'45:00'} title='Current Task'/>
+            {/* <TimeDisplay className='hidden lg:flex' time={'45:00'} title='Current Task'/> */}
+            <Counter className='hidden lg:flex' />
           </div>
           <div className='grow w-full'>
             <TimeDisplay className='hidden lg:flex' time={'2:34'} title={'Time Working'}/>
