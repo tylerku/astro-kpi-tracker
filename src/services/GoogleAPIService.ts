@@ -1,4 +1,7 @@
+import { User } from '@/models';
 import { Auth, google } from 'googleapis'
+
+type GoogleUserInfo = Omit<User, 'id'>
 
 interface GoogleConfig {
   clientId: string;
@@ -18,6 +21,8 @@ class GoogleAPIService {
   private spreadsheetId: string;
   private defaultScope = [
     'https://www.googleapis.com/auth/spreadsheets', // Add any additional scopes you require
+    'https://www.googleapis.com/auth/userinfo.email',
+    'https://www.googleapis.com/auth/userinfo.profile'
   ];
 
   constructor() {
@@ -74,6 +79,30 @@ class GoogleAPIService {
     } catch (err) {
       console.error('Get Cell Value Error: ', err);
     }
+  }
+
+  getUserInfo = async (accessToken: string): Promise<GoogleUserInfo | undefined> => {
+    try {
+      const resp = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      })
+      const userInfoData = await resp.json()
+      const authProviderId = userInfoData.sub
+      const email = userInfoData.email
+      const firstName = userInfoData.given_name
+      const lastName = userInfoData.family_name
+      return {
+        authProviderId,
+        email,
+        firstName,
+        lastName,
+      } as GoogleUserInfo
+    } catch(error) {
+      console.error('Error getting user info: ', error);
+    }
+    
   }
 
   /**

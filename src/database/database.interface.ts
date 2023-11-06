@@ -2,9 +2,8 @@ export type QueryResult<T> = {
   rows: T[];
 }
 
-interface Database {
+interface IDatabase {
   query: (queryString: string) => Promise<QueryResult<any>>;
-  insertNewTimeBlock: (userId: number) => Promise<QueryResult<any>>;
 }
 
-export default Database
+export default IDatabase

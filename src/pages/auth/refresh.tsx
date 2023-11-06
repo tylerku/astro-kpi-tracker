@@ -66,7 +66,6 @@ const RefreshPage: React.FC<RefreshPageProps> = (props) => {
 
 export const getServerSideProps: GetServerSideProps = async (context: GetServerSidePropsContext) => {
   const successRedirect = context.query.redirectPath as string ?? undefined
-  console.log('successRedirect: ', successRedirect)
   const cookies = parse(context.req.headers.cookie ?? '')
 
   const refreshToken = cookies['refreshToken']

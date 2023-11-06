@@ -1,1 +1,0 @@
-export const INSERT_NEW_TIME_BLOCK = (userId: number) => `INSERT INTO time_block (start, user_id) VALUES (CURRENT_TIMESTAMP, ${userId});`

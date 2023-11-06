@@ -2,43 +2,41 @@
 
 import { CSSProperties, useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { AuthContext, AuthContextValue } from '../../context';
 import RingLoader from "react-spinners/RingLoader";
-import Cookies from 'js-cookie';
+import { useDispatch } from 'react-redux';
+import { setCurrentUser } from '@/redux/Auth.slice'
 
 // import { googleConfig } from '../../../googleConfig';
 
 const CallbackPage: React.FC = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
+  const dispatch = useDispatch()
 
   useEffect(() => {
     const { code } = router.query;
     saveAccessTokenFromAuthCode(code as string);
   }, [router.query])
 
-  const saveAccessTokenFromAuthCode = (authCode: string) => {
+  const saveAccessTokenFromAuthCode = async (authCode: string) => {
     if (authCode) {
-      // Call your server-side API endpoint to exchange the authorization code for an access token
-      console.log('Auth code found on callback page. About to exchange it for an access token....')
-      fetch('/api/auth/callback', {
-        method: 'POST',
-        body: JSON.stringify({ code: authCode }),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
-      .then((response) => response.json())
-      .then((data) => {
+      try {
+        const resp = await fetch('/api/auth/callback', {
+          method: 'POST',
+          body: JSON.stringify({ code: authCode }),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
+        const data = await resp.json()
+        const user = data.user
+        dispatch(setCurrentUser(user))
         router.push('/home')
-      })
-      .catch((error) => {
+      } catch (error) {
         console.error('Error during OAuth2 callback:', error);
-      }).finally(() => {
-        console.log('Made it to the finally clause of the callback')
-        setIsLoading(false);
-        return null
-      });
+      }
+      setIsLoading(false);
+      return null
     } else {
       console.log('There is no code found in the url')
     }
