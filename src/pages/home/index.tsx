@@ -10,6 +10,9 @@ import { parse } from "cookie";
 import { getServerSideAuthorization } from '../../utils/auth'
 import timeBlockService from '../../services/TimeBlockService'
 import Counter from "@/components/Counter";
+import dailyKPIService from "@/services/DailyKPIService";
+import { useSelector } from "react-redux";
+import { User } from '@/models'
 
 interface HomePageProps {
   dailyKPIMetrics: notionKPI[]
@@ -17,11 +20,17 @@ interface HomePageProps {
   serverError?: Error
 }
 const HomePage: React.FC<HomePageProps> = (props) => {
-
   const router = useRouter()
   const [dailyKPIMetrics, setDailyKPIMetrics] = useState<notionKPI[]>(props.dailyKPIMetrics)
   const [weeklyKPIMetrics, setWeeklyKPIMetrics] = useState<Record<string, notionKPI[]>>(props.weeklyKPIMetrics)
   const [barGraphOptions, setBarGraphOptions] = useState<BarGraphOption[]>()
+  const currentUser: User = useSelector((state: any) => state.auth.currentUser)
+
+  useEffect(() => {
+    fetch(`/api/dailyKPIs/getTodaysKPIs?userId=${currentUser.id}`).then(resp => resp.json()).then(data => {
+      console.log('data: ', data)
+    })
+  }, [currentUser])
 
   useEffect(() => {
     setDailyKPIMetrics(props.dailyKPIMetrics)
@@ -166,8 +175,7 @@ const TodaySection: React.FC<TodaySectionProps> = (props) => {
         </div>
         <div className='flex grow flex-col h-full space-y-4'>
           <div className='grow w-full'>
-            {/* <TimeDisplay className='hidden lg:flex' time={'45:00'} title='Current Task'/> */}
-            <Counter className='hidden lg:flex' />
+            <TimeDisplay className='hidden lg:flex' time={'45:00'} title='Current Task'/>
           </div>
           <div className='grow w-full'>
             <TimeDisplay className='hidden lg:flex' time={'2:34'} title={'Time Working'}/>
@@ -192,6 +200,7 @@ const GraphsSection: React.FC<GraphsSectionProps> = (props) => {
 }
 
 export const getServerSideProps: GetServerSideProps = async (context: GetServerSidePropsContext) => {
+  // const dailyKPIs = 
   const kpiNames: string[] = ["Verbal Offers", "Written Offers", "Agent Conversations", "Buyers Called"]
   const kpiGoals: Record<string, number> = { [kpiNames[0]]: 10, [kpiNames[1]]: 2, [kpiNames[2]]: 50, [kpiNames[3]]: 5 }
   

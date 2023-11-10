@@ -14,6 +14,7 @@ const getUserFromAccessToken = async (accessToken?: string | null): Promise<User
     const userInfo = await googleAPIService.getUserInfo(accessToken)
     if (!userInfo?.authProviderId) throw new Error('No authProviderId found in userInfo')
     const user = await userService.getUserByAuthProviderId(userInfo.authProviderId)
+    if (!user) throw new Error('Failed to get user by authID from database')
     if (user) {
       return user;
     } else {
@@ -24,7 +25,6 @@ const getUserFromAccessToken = async (accessToken?: string | null): Promise<User
         lastName: userInfo?.lastName ?? '',
       }
       const newUser = await userService.createUser(newUserParams)
-      console.log('newUser created in database: ', newUser)
       if (!newUser) throw new Error('Failed to create new user')
       return newUser;
     }
