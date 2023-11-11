@@ -1,5 +1,5 @@
 import { User } from '@/models';
-import { UserAPI } from './User.api.interface';
+import UserAPI from './User.api.interface';
 import postgresQueries from '@/database/postgres/queries';
 import { postgresDB, IDatabase } from '@/database';
 

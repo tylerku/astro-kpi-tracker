@@ -6,11 +6,7 @@ import {PageWrapper, GoalsTable} from '../../components'
 import { SingleBarGraph, BarGraph, TimeDisplay, SingleBarGraphOption, BarGraphOption } from "../../components/Dashboard";
 import notionAPIService, { notionKPI } from "../../services/NotionAPIService";
 import moment from 'moment-timezone'
-import { parse } from "cookie";
 import { getServerSideAuthorization } from '../../utils/auth'
-import timeBlockService from '../../services/TimeBlockService'
-import Counter from "@/components/Counter";
-import dailyKPIService from "@/services/DailyKPIService";
 import { useSelector } from "react-redux";
 import { User } from '@/models'
 
