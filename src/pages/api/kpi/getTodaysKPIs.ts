@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import dailyKPIService from '../../../services/DailyKPIService';
+import dailyKPIService from '../../../services/KPIService';
 
 export default async function handler(
   request: NextApiRequest,
@@ -10,7 +10,7 @@ export default async function handler(
     const userId = Number(userIdParam)
     const result = await dailyKPIService.getTodaysKPIs(userId)
     return response.status(200).json({
-      result
+      data: result
     });
   } catch (error) {
     console.error('Error in getTodaysKPIs', error)

@@ -10,37 +10,44 @@ import { parse } from "cookie";
 import { getServerSideAuthorization } from '../../utils/auth'
 import timeBlockService from '../../services/TimeBlockService'
 import Counter from "@/components/Counter";
-import dailyKPIService from "@/services/DailyKPIService";
+import dailyKPIService from "@/services/KPIService";
 import { useSelector } from "react-redux";
-import { User } from '@/models'
+import { User, DailyKPI } from '@/models'
+import { init } from "next/dist/compiled/@vercel/og/satori";
+import axios from "axios";
 
-interface HomePageProps {
-  dailyKPIMetrics: notionKPI[]
-  weeklyKPIMetrics: Record<string, notionKPI[]> 
-  serverError?: Error
-}
+interface HomePageProps {}
+
 const HomePage: React.FC<HomePageProps> = (props) => {
   const router = useRouter()
-  const [dailyKPIMetrics, setDailyKPIMetrics] = useState<notionKPI[]>(props.dailyKPIMetrics)
-  const [weeklyKPIMetrics, setWeeklyKPIMetrics] = useState<Record<string, notionKPI[]>>(props.weeklyKPIMetrics)
+  const [dailyKPIMetrics, setDailyKPIMetrics] = useState<DailyKPI[]>([])
+  const [weeklyKPIMetrics, setWeeklyKPIMetrics] = useState<Record<string, DailyKPI[]> | undefined>(undefined)
   const [barGraphOptions, setBarGraphOptions] = useState<BarGraphOption[]>()
   const currentUser: User = useSelector((state: any) => state.auth.currentUser)
 
   useEffect(() => {
-    fetch(`/api/dailyKPIs/getTodaysKPIs?userId=${currentUser.id}`).then(resp => resp.json()).then(data => {
-      console.log('data: ', data)
-    })
+    if (!currentUser) return
+    initData(currentUser)
   }, [currentUser])
 
-  useEffect(() => {
-    setDailyKPIMetrics(props.dailyKPIMetrics)
-  }, [props.dailyKPIMetrics])
+  const initTodaysKPIs = async (user: User) => {
+    const resp = await axios.get(`/api/kpi/getTodaysKPIs?userId=${user.id}`)
+    const axiosData = resp.data
+    const todaysKPIs: DailyKPI[] = axiosData.data
+    setDailyKPIMetrics(todaysKPIs)
+  }
+
+  const initWeeklyKPIs = async (user: User) => {
+
+  }
+  
+  const initData = async (user: User) => {
+    initTodaysKPIs(user)
+
+  }
 
   useEffect(() => {
-    setWeeklyKPIMetrics(props.weeklyKPIMetrics)
-    const newOptions = getBarGraphOptionsFromWeeklyKPIMetrics(props.weeklyKPIMetrics)
-    setBarGraphOptions(newOptions)
-  }, [props.weeklyKPIMetrics])
+  }, [])
 
   const logout = async () => {
     try {
@@ -91,13 +98,13 @@ const HomePage: React.FC<HomePageProps> = (props) => {
   }
 
   const onGoalsTableKpiUpdated = (kpi: notionKPI) => {
-    const updatedDailyKPIMetrics = dailyKPIMetrics.map((item: notionKPI) => {
-      if (item.key === kpi.key) {
-        return kpi
-      }
-      return item
-    })
-    setDailyKPIMetrics(updatedDailyKPIMetrics)
+    // const updatedDailyKPIMetrics = dailyKPIMetrics.map((item: notionKPI) => {
+    //   if (item.key === kpi.key) {
+    //     return kpi
+    //   }
+    //   return item
+    // })
+    // setDailyKPIMetrics(updatedDailyKPIMetrics)
   }
 
   return (
@@ -108,18 +115,12 @@ const HomePage: React.FC<HomePageProps> = (props) => {
           <div className='w-full grow flex flex-row justify-center items-center space-x-6'>
             <TodaySection
               className='shrink lg:grow'
-              singleBarGraphOptions={dailyKPIMetrics.map((item: notionKPI) => ({
-                maxY: item.goal,
-                value: item.value,
-                title: item.key,
-                yInterval: item.goal > 5 ? item.goal / 5 : 1,
-                showZero: true
-              }))}
+              singleBarGraphOptions={[]}
             />
             <GraphsSection className='grow-2 lg:grow-3' options={barGraphOptions ?? []} />
           </div>
           <div className='w-full max-h-[50%] relative flex'>
-            <GoalsTable kpiMetrics={dailyKPIMetrics} onKpiUpdated={onGoalsTableKpiUpdated}/>
+            <GoalsTable kpiMetrics={[]} onKpiUpdated={onGoalsTableKpiUpdated}/>
           </div>
         </div>
         <div className='hidden xl:flex h-full w-[25%] bg-[#212046] max-w-[400px]'>
@@ -198,38 +199,6 @@ const GraphsSection: React.FC<GraphsSectionProps> = (props) => {
     </div>
   )
 }
-
-export const getServerSideProps: GetServerSideProps = async (context: GetServerSidePropsContext) => {
-  // const dailyKPIs = 
-  const kpiNames: string[] = ["Verbal Offers", "Written Offers", "Agent Conversations", "Buyers Called"]
-  const kpiGoals: Record<string, number> = { [kpiNames[0]]: 10, [kpiNames[1]]: 2, [kpiNames[2]]: 50, [kpiNames[3]]: 5 }
-  
-  const redirectObject = getServerSideAuthorization(context)
-  if (redirectObject) {
-    return redirectObject
-  }
-
-  try {
-    const dailyMetricsPromise = notionAPIService.getTodaysKPIs(kpiNames, kpiGoals)
-    const weeklyMetricsPromise = notionAPIService.getThisWeeksKPIs(kpiNames, kpiGoals)
-    const values = await Promise.all([dailyMetricsPromise, weeklyMetricsPromise])
-    const dailyKPIMetrics = values[0] ?? []
-    const weeklyKPIMetrics = values[1] ?? []
-    return {
-      props: {
-        dailyKPIMetrics,
-        weeklyKPIMetrics
-      }
-    }
-  } catch(error) {
-    return {
-      props: {
-        serverError: error 
-      }
-    }
-  }
-}
-
 
 
 export default HomePage

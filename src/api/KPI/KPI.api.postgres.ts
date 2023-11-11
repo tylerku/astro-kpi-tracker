@@ -1,13 +1,13 @@
 import { DailyKPI } from '@/models';
-import DailyKPIAPI from './DailyKPI.api.interface';
+import KPIAPI from './KPI.api.interface';
 import { queries, PostgreSQLTimezone } from '@/database/postgres';
-import { postgresDB, IDatabase } from '@/database';
+import { IDatabase } from '@/database';
 
-class PostgresDailyKPIAPI implements DailyKPIAPI {
+export default class PostgresKPIAPI implements KPIAPI {
 
   database: IDatabase;
 
-  constructor(database: IDatabase = postgresDB) {
+  constructor(database: IDatabase) {
     this.database = database;
   }
 
@@ -37,6 +37,13 @@ class PostgresDailyKPIAPI implements DailyKPIAPI {
       return []
     }
   }
-}
 
-export default new PostgresDailyKPIAPI(postgresDB)
+  async getThisWeeksKPIs(userId: number): Promise<Record<string, DailyKPI[]>> {
+    try {
+
+    } catch(error) {
+      console.error(error)
+      return {}
+    }
+  }
+}
