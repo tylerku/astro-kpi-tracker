@@ -35,8 +35,8 @@ export default class PostgresKPIAPI implements KPIAPI {
       const kpis = res1.rows.map((dailyKPI: any) => {
         return {
           ...dailyKPI,
-          definitionId: dailyKPI.daily_kpi_id,
-          goal: Number(dailyKPI.goal),
+          definitionId: dailyKPI.id,
+          goal: Number(dailyKPI.goal)
         } as DailyKPI
       })
       const query2 = queries.dailyKPIEntry.getTodaysMostRecentDailyKPIEntries(userTimezone, kpis.map(kpi => kpi.definitionId ?? ''))
@@ -52,7 +52,7 @@ export default class PostgresKPIAPI implements KPIAPI {
       return result
     } catch (error) {
       console.error(error)
-      return []
+      throw error
     }
   }
 
