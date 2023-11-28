@@ -1,7 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react'
 import Image from 'next/image';
-import notionAPIService from '../../services/NotionAPIService'
-import { notionKPI } from '../../services/NotionAPIService';
+import { DailyKPI } from '@/models'
+import { useDispatch, useSelector } from 'react-redux';
+import moment from 'moment-timezone'
+import { incrementKPI, updateKPI } from '@/redux/UserKPIs.slics';
 
 const sizeClasses = {
   nameColumn: 'w-4/12',
@@ -11,24 +13,15 @@ const sizeClasses = {
   containerXPadding: 'px-12'
 }
 
-interface GoalsTableProps {
-  kpiMetrics: notionKPI[]
-  onKpiUpdated: (kpi: notionKPI) => void
-}
-
-const GoalsTable: React.FC<GoalsTableProps> = (props) => {
-
-  const handleRowValueUpdate = (kpi: notionKPI) => {
-    props.onKpiUpdated(kpi)
-  }
-
+const GoalsTable: React.FC<{}> = () => {
+  const kpiMetrics: DailyKPI[] = useSelector((state: any) => state.kpis.kpis[moment().format('YYYY-MM-DD')])
   return (
     <div className="w-full flex-grow mt-5 space-y-4 flex flex-col">
       <TableHeader/>
       <div className='w-full space-y-4 flex-grow overflow-auto'>
-        {props.kpiMetrics?.map((kpi: notionKPI, index: number) => {
+        {kpiMetrics?.map((kpi: DailyKPI, index: number) => {
           return (
-            <TableRow kpi={kpi} rowKey={index} key={index} onValueUpdate={(updatedValue: notionKPI) => handleRowValueUpdate(updatedValue)}/>
+            <TableRow kpi={kpi} rowKey={index} key={index}/>
           )
         })}
       </div>
@@ -60,20 +53,19 @@ const TableHeader:React.FC<TableHeaderProps> = (props) => {
 }
 
 interface TableRowProps {
-  kpi: notionKPI
+  kpi: DailyKPI
   rowKey: number
-  onValueUpdate: (kpi: notionKPI) => void
 }
 
 const TableRow:React.FC<TableRowProps> = (props) => {
 
   const updateKPITimeoutId = useRef<NodeJS.Timeout | null>(null)
-  const [kpiValue, setKpiValue] = useState<number>(props.kpi.value)
+  const dispatch = useDispatch()
 
   const updateTodayKPI = async (newValue: number) => {
-    const res = await fetch('/api/notion/updateTodayKPI', {
+    const res = await fetch('/api/kpi/increment', {
         method: 'POST',
-        body: JSON.stringify({ kpiName: props.kpi.key, kpiNumber: newValue }),
+        body: JSON.stringify({kpi: {...props.kpi }}),
         headers: {
           'Content-Type': 'application/json',
         },
@@ -84,17 +76,15 @@ const TableRow:React.FC<TableRowProps> = (props) => {
 
   const handleButtonClicked = () => {
     try {
-      const incrementedValue = kpiValue + 1
-      setKpiValue(incrementedValue)
-      props.onValueUpdate({ ...props.kpi, value: incrementedValue })
-
+      // dispatch(incrementKPI({ date: moment().format('YYYY-MM-DD') as `${number}-${number}-${number}`, kpi: props.kpi })) 
+      dispatch(updateKPI({ date: moment().format('YYYY-MM-DD') as `${number}-${number}-${number}`, kpi: {...props.kpi, current: props.kpi.current + 1}})) 
       if (updateKPITimeoutId.current) {
         clearTimeout(updateKPITimeoutId.current)
       }
 
       const waitTime = 1000
       updateKPITimeoutId.current = setTimeout(() => {
-        updateTodayKPI(incrementedValue).then(() => {
+        updateTodayKPI(props.kpi.current).then(() => {
           updateKPITimeoutId.current = null
         })
       }, waitTime)
@@ -108,13 +98,13 @@ const TableRow:React.FC<TableRowProps> = (props) => {
   return (
     <div className={`ml-[3%] w-[94%] flex justify-center items-center bg-[#212046] rounded-lg py-6 ${sizeClasses.containerXPadding} font-bold text-lg`}>
       <div className={`${sizeClasses.nameColumn}`}>
-        {props.kpi.key}
+        {props.kpi.name}
       </div>
       <div className={`${sizeClasses.goalColumn}`}>
-        {kpiValue} / {props.kpi.goal}
+        {props.kpi.current} / {props.kpi.goal}
       </div>
       <div className={`${sizeClasses.progressColumn} pr-12`}>
-        <ProgressBar current={kpiValue} goal={props.kpi.goal} animationDelay={props.rowKey * 100}/>
+        <ProgressBar current={props.kpi.current} goal={props.kpi.goal} animationDelay={props.rowKey * 100}/>
       </div>
       <div className={`${sizeClasses.buttonColumn}`}>
         <button onClick={() => handleButtonClicked()}className='transition-all duration-200 hover:scale-90 w-[90%] max-w-[46px] aspect-square p-2 bg-[#121939] hover:bg-[#6E6E8199] rounded'>

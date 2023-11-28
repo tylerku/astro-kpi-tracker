@@ -1,5 +1,7 @@
 export type DailyKPI = {
-  id: number 
+  entryId?: string 
+  definitionId?: string
+  timestamp: string
   dataType: string
   name: string
   goal: number

@@ -1,5 +1,5 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit'
-import { AuthReducer, CounterReducer } from './redux'
+import { AuthReducer, CounterReducer, UserKPIReducer } from './redux'
 import { persistStore, persistReducer } from 'redux-persist'
 import storage from 'redux-persist/lib/storage' // defaults to localStorage for web
 
@@ -12,7 +12,8 @@ const persistedReducer = persistReducer(
   persistConfig, 
   combineReducers({
     counter: CounterReducer,
-    auth: AuthReducer
+    auth: AuthReducer,
+    kpis: UserKPIReducer
   })
 )
 
