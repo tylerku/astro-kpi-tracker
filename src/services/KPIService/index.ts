@@ -1,5 +1,5 @@
-import DailyKPIService from './KPIService'
-import postgresDailyKPIAPI from '@/api/KPI'
+import KPIService from './KPIService'
+import postgresKPIAPI from '@/api/KPI'
 
-const dailyKPIService = new DailyKPIService(postgresDailyKPIAPI)
-export default dailyKPIService
+const kpiService = new KPIService(postgresKPIAPI)
+export default kpiService

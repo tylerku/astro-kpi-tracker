@@ -1,4 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import { TIMEZONE } from '@/models';
 import dailyKPIService from '../../../services/KPIService';
 
 export default async function handler(
@@ -8,7 +9,7 @@ export default async function handler(
   try {
     const userIdParam = request.query['userId'];
     const userId = Number(userIdParam)
-    const result = await dailyKPIService.getTodaysKPIs(userId)
+    const result = await dailyKPIService.getTodaysKPIs(userId, TIMEZONE.MST)
     return response.status(200).json({
       data: result
     });

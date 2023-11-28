@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import DashboardComponent from '../DashboardComponent'
 
 interface SingleBarGraphProps {
@@ -17,6 +17,12 @@ const SingleBarGraph: React.FC<SingleBarGraphProps> = (props) => {
   const [selectedOptionTitle, setSelectedOptionTitle] = React.useState<string>(props.options?.[0]?.title ?? '')
   const [showOptionsDropdown, setShowOptionsDropdown] = React.useState<boolean>(false)
   
+  useEffect(() => {
+    if (selectedOptionTitle === '') {
+      setSelectedOptionTitle(props.options?.[0]?.title ?? '')
+    }
+  }, [props.options])
+
   const getSelectedOption = () => {
     return props.options?.find((option: SingleBarGraphOption) => option.title === selectedOptionTitle)
   }
