@@ -1,8 +1,6 @@
 import IKPIAPI from './KPI.api.interface';
-import PostgresKPIAPI from './KPI.api.postgres'
-import { postgresDB } from '@/database'
+import SupabaseKPIAPI from './KPI.api.supabase'
 
-const postgresKPIAPI = new PostgresKPIAPI(postgresDB)
-
-export default postgresKPIAPI
+const KPIAPI = new SupabaseKPIAPI()
+export { KPIAPI }
 export type { IKPIAPI }

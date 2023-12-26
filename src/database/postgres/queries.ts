@@ -42,7 +42,6 @@ const GET_USERS_DAILY_KPIS = (userId: number) => `
   SELECT ${schema}.daily_kpi.name, id, data_type, goal FROM ${schema}.daily_kpi WHERE ${schema}.daily_kpi.user_id = ${userId};`
 const GET_USERS_WEEKLY_KPIS_PER_DAY = (timezone: TIMEZONE, KPIIDs: number[]) => {
   const pgtz = PostgreSQLTimezone[timezone]
-  console.log('CHECK THIS OUT: ', pgtz)
   return `
   SELECT
     MAX(id) AS id,

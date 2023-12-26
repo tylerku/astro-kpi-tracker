@@ -72,6 +72,16 @@ export const getServerSideProps: GetServerSideProps = async (context: GetServerS
   const props: RefreshPageProps = {
     refreshToken
   }
+  if (refreshToken) {
+    props.refreshToken = refreshToken
+  } else {
+    return {
+      redirect: {
+        destination: '/auth/logout',
+        permanent: false
+      }
+    }
+  }
   if (successRedirect) {
     props.successRedirect = successRedirect
   }

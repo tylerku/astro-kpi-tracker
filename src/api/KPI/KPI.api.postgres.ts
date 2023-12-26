@@ -103,7 +103,6 @@ export default class PostgresKPIAPI implements KPIAPI {
         day = day.clone().add(1, 'd')
       }
 
-      console.log('results2: ', result)
 
       // where empty, add daily kpi objects with current value as 0 for each kpi for each day of the week
       for (const [date, kpiArray] of Object.entries(result)) {

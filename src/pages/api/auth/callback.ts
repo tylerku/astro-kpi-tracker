@@ -14,7 +14,6 @@ const getUserFromAccessToken = async (accessToken?: string | null): Promise<User
     const userInfo = await googleAPIService.getUserInfo(accessToken)
     if (!userInfo?.authProviderId) throw new Error('No authProviderId found in userInfo')
     const user = await userService.getUserByAuthProviderId(userInfo.authProviderId)
-    if (!user) throw new Error('Failed to get user by authID from database')
     if (user) {
       return user;
     } else {

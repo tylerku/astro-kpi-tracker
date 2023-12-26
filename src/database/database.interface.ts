@@ -1,9 +1,12 @@
-export type QueryResult<T> = {
-  rows: T[];
-}
+import { DailyKPI, TIMEZONE, User } from '@/models'
 
 interface IDatabase {
-  query: (queryString: string) => Promise<QueryResult<any>>;
+  getUserByAuthProviderId(authProviderId: string): Promise<User | undefined>
+  createUser(user: Omit<User, 'id'>): Promise<User | undefined>
+  getDailyKPIsByUser: (userId: number) => Promise<DailyKPI[]>
+  getTodaysLatestKPIEntries: (kpiIDs: string[], timezone: TIMEZONE) => Promise<DailyKPI[]>
+  getWeeksLatestDailyKPIEntries: (kpiUDs: string[], timezone: TIMEZONE) => Promise<DailyKPI[]>
+  upsertKPI: (kpi: DailyKPI, action: string) => Promise<DailyKPI>
 }
 
 export default IDatabase

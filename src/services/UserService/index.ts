@@ -1,5 +1,5 @@
 import UserService from './UserService'
-import {postgresUserAPI} from '@/api/User'
+import {supabaseUserAPI} from '@/api/User'
 
-const userService = new UserService(postgresUserAPI)
+const userService = new UserService(supabaseUserAPI)
 export default userService

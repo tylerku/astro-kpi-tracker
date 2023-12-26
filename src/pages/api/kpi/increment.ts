@@ -9,7 +9,7 @@ export default async function handler(
 ) {
   try {
     const kpi: DailyKPI = request.body.kpi
-    console.log('kpi: ', kpi)
+    console.log('before update kpi: ', kpi)
     const result = await kpiService.incrementKPI(kpi)
     return response.status(200).json({});
   } catch (error) {

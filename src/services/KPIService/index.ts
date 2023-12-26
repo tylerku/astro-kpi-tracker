@@ -1,5 +1,5 @@
 import KPIService from './KPIService'
-import postgresKPIAPI from '@/api/KPI'
+import { KPIAPI } from '@/api/KPI'
 
-const kpiService = new KPIService(postgresKPIAPI)
+const kpiService = new KPIService(KPIAPI)
 export default kpiService
