@@ -33,7 +33,7 @@ const CallbackPage: React.FC = () => {
   };
 
   return (
-    <div className='mt-20 w-full flex flex-col bg-[#04122D]'>
+    <div className='mt-20 w-full flex flex-col bg-darkGray'>
       <h1 className='my-20 text-xl text-center justify-center'>Logging out of Astro KPI Tracker...</h1>
       <button onClick={() => router.push('/')}>Logout</button>
       <RingLoader

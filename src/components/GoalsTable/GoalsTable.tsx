@@ -18,7 +18,7 @@ const GoalsTable: React.FC<{}> = () => {
   return (
     <div className="w-full flex-grow mt-5 space-y-4 flex flex-col">
       <TableHeader/>
-      <div className='w-full space-y-4 flex-grow overflow-auto'>
+      <div className='w-full space-y-4 flex-grow overflow-auto no-scrollbar'>
         {kpiMetrics?.map((kpi: DailyKPI, index: number) => {
           return (
             <TableRow kpi={kpi} rowKey={index} key={index}/>

@@ -49,7 +49,7 @@ const RefreshPage: React.FC<RefreshPageProps> = (props) => {
   };
 
   return (
-    <div className='pt-20 w-full h-full flex flex-col bg-[#04122D]'>
+    <div className='pt-20 w-full h-full flex flex-col bg-darkGray'>
       <h1 className='my-20 text-xl text-center justify-center'>Refreshing your Astro KPI access...</h1>
       <RingLoader
         onClick={() => router.push('/home')}

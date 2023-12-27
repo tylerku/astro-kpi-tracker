@@ -15,7 +15,7 @@ export default function Home() {
   }, [])
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-start p-24 bg-[#04122D]">
+    <main className="flex min-h-screen flex-col items-center justify-start p-24 bg-darkGray">
       <div className="text-center z-10 w-full max-w-5xl items-center justify-between font-mono text-4xl">
         Astro KPI Tracker
       </div>

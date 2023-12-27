@@ -128,7 +128,7 @@ const HomePage: React.FC<HomePageProps> = (props) => {
             <GoalsTable />
           </div>
         </div>
-        <div className='hidden xl:flex h-full w-[25%] bg-[#212046] max-w-[400px]'>
+        <div className='hidden xl:flex h-full w-[25%] bg-spaceGray max-w-[400px]'>
         </div>
       </div>
     </PageWrapper>
