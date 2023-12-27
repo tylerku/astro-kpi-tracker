@@ -114,7 +114,7 @@ const HomePage: React.FC<HomePageProps> = (props) => {
 
   return (
     <PageWrapper>
-      <div className='h-full w-full bg-[#04122D] flex flex-row'>
+      <div className='h-full w-full bg-darkGray flex flex-row'>
         <div className='h-full w-full p-10 flex-grow flex flex-col space-y-8'>
           <PageHeader title={'Good Morning, Ty'}/>
           <div className='w-full grow flex flex-row justify-center items-center space-x-6'>

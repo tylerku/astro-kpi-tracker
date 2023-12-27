@@ -195,7 +195,7 @@ const BarGraph: React.FC<BarGraphProps> = (props) => {
     <DashboardComponent className='flex flex-col justify-end p-4 px-5 pb-8 rounded-2xl'>
       <button onClick={() => setShowOptionsDropdown(false)}className={`${showOptionsDropdown ? '' : 'hidden'} bg-transparet h-screen w-screen absolute z-10 top-0 left-0`}/>
       <div className='flex flex-row relative justify-between items-center'>
-        <button onClick={handleDropwdownClicked} className={`whitespace-nowrap transition-all duration-200 hover:scale-95 hover:bg-[#474764] p-2 ${showOptionsDropdown ? 'bg-[#474764] scale-95' : 'bg-[#04122D80]'} rounded font-bold px-4`}>
+        <button onClick={handleDropwdownClicked} className={`whitespace-nowrap transition-all duration-200 hover:scale-95 hover:bg-[#474764] p-2 ${showOptionsDropdown ? 'bg-darkGray scale-95' : 'bg-darkGray'} rounded font-bold px-4`}>
           {getSelectedOption()?.title}
         </button>
         {/* <button onClick={handleDropwdownClicked} className={`whitespace-nowrap transition-all duration-200 hover:scale-95 hover:bg-[#474764] p-2 ${showOptionsDropdown ? 'bg-[#474764] scale-95' : 'bg-[#04122D80]'} rounded font-bold px-4`}>

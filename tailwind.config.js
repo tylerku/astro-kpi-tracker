@@ -6,6 +6,12 @@ module.exports = {
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
+    colors: {
+      darkGray: "#1A1A1A",
+      spaceGray: "#262627",
+      'basic-gray': '#3C3C3D',
+      lightGray: "#BCBCBC"
+    },
     screens: {
       'sm': '576px',
       'md': '768px',

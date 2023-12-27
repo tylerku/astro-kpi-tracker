@@ -7,7 +7,7 @@ interface DashboardComponentProps {
 
 const DashboardComponent: React.FC<DashboardComponentProps> = (props) => {
   return (
-    <div className={`rounded-lg bg-[#212046] w-full h-full ${props.className ?? ''}`}>
+    <div className={`rounded-lg bg-spaceGray w-full h-full ${props.className ?? ''}`}>
       {props.children}
     </div>
   )

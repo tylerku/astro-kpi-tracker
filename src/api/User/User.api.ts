@@ -1,10 +1,8 @@
 import { User } from '@/models';
-import postgresQueries from '@/database/postgres/queries';
 import { IDatabase, supabaseDB } from '@/database';
-import UserAPI from './User.api.interface';
-import { SupabaseClient } from '@supabase/supabase-js';
+import IUserAPI from './User.api.interface';
 
-class SupabaseKPIAPI implements UserAPI {
+export default class UserAPI implements IUserAPI {
   database: IDatabase;
 
   constructor() {
@@ -19,5 +17,3 @@ class SupabaseKPIAPI implements UserAPI {
     return await this.database.createUser(user)
   }
 }
-
-export default new SupabaseKPIAPI()

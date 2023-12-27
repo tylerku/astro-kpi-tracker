@@ -1,6 +1,6 @@
 import IKPIAPI from './KPI.api.interface';
-import SupabaseKPIAPI from './KPI.api.supabase'
+import KPIAPI from './KPI.api'
 
-const KPIAPI = new SupabaseKPIAPI()
-export { KPIAPI }
+const kpiAPI = new KPIAPI()
+export { kpiAPI }
 export type { IKPIAPI }

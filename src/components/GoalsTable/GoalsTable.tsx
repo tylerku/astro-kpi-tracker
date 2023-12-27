@@ -34,7 +34,7 @@ interface TableHeaderProps {
 
 const TableHeader:React.FC<TableHeaderProps> = (props) => {
   return (
-    <div className={`w-full bg-[#212046] rounded-lg`}>
+    <div className={`w-full bg-spaceGray rounded-lg`}>
       <div className={`${sizeClasses.containerXPadding} w-[94%] ml-[3%] flex py-4 font-bold text-lg text-[#BCBCBC]`}>
         <div className={`${sizeClasses.nameColumn}`}>
           Name
@@ -96,7 +96,7 @@ const TableRow:React.FC<TableRowProps> = (props) => {
 
 
   return (
-    <div className={`ml-[3%] w-[94%] flex justify-center items-center bg-[#212046] rounded-lg py-6 ${sizeClasses.containerXPadding} font-bold text-lg`}>
+    <div className={`ml-[3%] w-[94%] flex justify-center items-center bg-spaceGray rounded-lg py-6 ${sizeClasses.containerXPadding} font-bold text-lg`}>
       <div className={`${sizeClasses.nameColumn}`}>
         {props.kpi.name}
       </div>
@@ -107,7 +107,7 @@ const TableRow:React.FC<TableRowProps> = (props) => {
         <ProgressBar current={props.kpi.current} goal={props.kpi.goal} animationDelay={props.rowKey * 100}/>
       </div>
       <div className={`${sizeClasses.buttonColumn}`}>
-        <button onClick={() => handleButtonClicked()}className='transition-all duration-200 hover:scale-90 w-[90%] max-w-[46px] aspect-square p-2 bg-[#121939] hover:bg-[#6E6E8199] rounded'>
+        <button onClick={() => handleButtonClicked()}className='transition-all duration-200 hover:scale-90 w-[90%] max-w-[46px] aspect-square p-2 bg-darkGray hover:bg-[#6E6E8199] rounded'>
           <div className='aspect-square relative'>
             <Image src='/upArrow.svg' alt='logo' fill/>
           </div>

@@ -188,7 +188,7 @@ const SingleBarGraph: React.FC<SingleBarGraphProps> = (props) => {
         <div className='flex-grow h-full' />
       </div>
       <div className='flex flex-row pt-4 relative transition-all justify-center items-center'>
-        <button onClick={handleTitleClicked} className={`w-full whitespace-nowrap transition-all duration-200 hover:scale-95 hover:bg-[#474764] p-2 ${showOptionsDropdown ? 'bg-[#474764] scale-95' : 'bg-[#04122D80]'} rounded font-bold px-4`}>
+        <button onClick={handleTitleClicked} className={`w-full whitespace-nowrap transition-all duration-200 hover:scale-95 hover:bg-[#474764] p-2 ${showOptionsDropdown ? 'bg-darkGray scale-95' : 'bg-darkGray'} rounded font-bold px-4`}>
           {getSelectedOption()?.title}
         </button>
         <DropdownBox 

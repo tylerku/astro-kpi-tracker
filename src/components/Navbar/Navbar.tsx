@@ -10,7 +10,7 @@ const Navbar: React.FC<any> = () => {
   const router = useRouter()
 
   return(
-    <nav className='w-[12%] bg-[#212046] h-screen'>
+    <nav className='w-[12%] bg-spaceGray h-screen'>
       <Logo />
       <ul className='flex flex-col'>
         <NavbarItem route={router.pathname} href='/home'>Home</NavbarItem>

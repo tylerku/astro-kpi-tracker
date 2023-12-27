@@ -1,10 +1,9 @@
 import { TIMEZONE, DailyKPI } from '@/models';
-import KPIAPI from './KPI.api.interface';
-import { SupabaseClient, createClient } from '@supabase/supabase-js';
+import IKPIAPI from './KPI.api.interface';
 import { IDatabase, supabaseDB } from '@/database';
 import moment from 'moment-timezone';
 
-export default class SupabaseKPIAPI implements KPIAPI {
+export default class KPIAPI implements IKPIAPI {
   
   private database: IDatabase
 

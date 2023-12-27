@@ -1,6 +1,5 @@
-import postgresDB from './postgres';
 import supabaseDB from './supabase'
-import IDatabase, { QueryResult } from './database.interface'
+import IDatabase from './database.interface'
 
-export { postgresDB, supabaseDB }
-export type { IDatabase, QueryResult };
+export { supabaseDB }
+export type { IDatabase };
