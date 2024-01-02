@@ -2,14 +2,14 @@ import { useRouter } from "next/router";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { useState } from "react";
 import React, { useEffect } from "react";
-import {PageWrapper, GoalsTable} from '../../components'
-import { SingleBarGraph, BarGraph, TimeDisplay, SingleBarGraphOption, BarGraphOption } from "../../components/Dashboard";
+import {PageWrapper, DropdownMenu, SettingsButton} from '../../components'
+import { SingleBarGraph, BarGraph, TimeDisplay, SingleBarGraphOption, BarGraphOption, KPICard, GoalsBoard, GoalsCardOption, GoalProgressItem } from "../../components/Dashboard";
 import notionAPIService, { notionKPI } from "../../services/NotionAPIService";
 import moment from 'moment-timezone'
 import { useDispatch, useSelector } from "react-redux";
 import { User, DailyKPI } from '@/models'
 import axios from "axios";
-import { initializeKPIs } from '../../redux/UserKPIs.slics'
+import { initializeKPIs, incrementKPI, decrementKPI } from '../../redux/UserKPIs.slics'
 
 interface HomePageProps {}
 
@@ -112,20 +112,54 @@ const HomePage: React.FC<HomePageProps> = (props) => {
     return barGraphOptions
   }
 
+  const getGoalsBoardOptions = (): GoalsCardOption[] => {
+    const goalCardOptions: GoalsCardOption[] = []
+    const namesToSums: Record<string, GoalProgressItem> = {}
+    for (const [date, kpis] of Object.entries(userWeeklyKPIs)) {
+      kpis.forEach(kpi => {
+        if (namesToSums[kpi.name]) {
+          namesToSums[kpi.name].value += kpi.current
+        } else {
+          namesToSums[kpi.name] = {
+            value: kpi.current,
+            title: kpi.name,
+            goal: kpi.goal
+          } as GoalProgressItem
+        }
+      })
+    }
+    goalCardOptions.push({
+      daysUntilGoalEnds: 0,
+      dateRange: {
+        begin: new Date(),
+        end: new Date()
+      },
+      buttonTitle: 'Weekly',
+      goalProgressItems: Object.values(namesToSums)
+    } as GoalsCardOption)
+
+    console.log('test: ', Object.values(namesToSums))
+    console.log(goalCardOptions)
+
+    return goalCardOptions
+
+  }
+
   return (
     <PageWrapper>
       <div className='h-full w-full bg-darkGray flex flex-row'>
         <div className='h-full w-full p-10 flex-grow flex flex-col space-y-8'>
           <PageHeader title={'Good Morning, Ty'}/>
-          <div className='w-full grow flex flex-row justify-center items-center space-x-6'>
-            <TodaySection
+          <div className='w-full h-[50%] space-x-6 flex flex-row'>
+            {/* <TodaySection
               className='shrink lg:grow'
               singleBarGraphOptions={singleBarGraphOptions ?? []}
-            />
-            <GraphsSection className='grow-2 lg:grow-3' options={barGraphOptions ?? []} />
+            /> */}
+            <KPISection className="shrink w-[50%]"/>
+            <GraphsSection className={'w-[50%]'/*'grow-2 lg:grow-3'*/} options={barGraphOptions ?? []} />
           </div>
-          <div className='w-full max-h-[50%] relative flex'>
-            <GoalsTable />
+          <div className='w-full h-[50%] grow space-x-6 max-h-[50%] relative flex flex-row'>
+            <GoalsBoard className='w-[50%] max-w-[50%] h-full' options={getGoalsBoardOptions()}/>            
           </div>
         </div>
         <div className='hidden xl:flex h-full w-[25%] bg-spaceGray max-w-[400px]'>
@@ -188,6 +222,61 @@ const TodaySection: React.FC<TodaySectionProps> = (props) => {
           </div>
         </div>
       </div>
+    </div>
+  )
+}
+
+interface KPISection {
+  className?: string
+}
+
+const KPISection: React.FC<KPISection> = (props) => {
+  
+  const today = moment().format('YYYY-MM-DD');
+  const kpis: Record<string, DailyKPI[]> = useSelector((state: any) => state.kpis.kpis)
+  const dispatch = useDispatch()
+
+  const handleIncrementClicked = async (kpi: DailyKPI) => {
+    try{
+      console.log('going to make request...')
+      const resp = await axios.post('/api/kpi/increment', {kpi})
+      if (resp.status === 200) {
+        dispatch(incrementKPI({
+          date: today as `${number}-${number}-${number}`,
+          kpi
+        }))
+      }
+    } catch (error) {
+      console.error(`There was an error incrementing the kpi ${kpi.name}. Error: ${error}`)
+    }
+    
+  }
+
+  return (
+    <div className={`flex bg-transparent grow flex-col h-full space-y-3 ${props.className ?? ''}`}>
+      <div className='flex flex-row space-x-3'>
+        <div className='font-bold text-[lightGray] text-3xl mr-auto'>KPIs</div>
+        <DropdownMenu 
+          onOptionSelected={() => null} 
+          buttonBgClass="bg-spaceGray"
+          options={['Today', 'Yesterday']}          
+        />
+        <SettingsButton className={'bg-spaceGray'}/>
+      </div>
+      <div className='grid grid-cols-2 gap-3 overflow-auto no-scollbar'>
+        {
+          kpis[today]?.map((kpi: DailyKPI) => (
+            <KPICard 
+              className="col-span-1"
+              onIncrement={() => handleIncrementClicked(kpi)}
+              onDecrement={() => null} 
+              title={kpi.name} 
+              value={kpi.current} 
+              goal={kpi.goal}      
+            />
+          ))
+        }
+      </div> 
     </div>
   )
 }

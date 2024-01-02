@@ -6,12 +6,6 @@ module.exports = {
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
-    colors: {
-      darkGray: "#1A1A1A",
-      spaceGray: "#262627",
-      'basic-gray': '#3C3C3D',
-      lightGray: "#BCBCBC"
-    },
     screens: {
       'sm': '576px',
       'md': '768px',
@@ -21,6 +15,16 @@ module.exports = {
       '3xl': '1520px',
     },
     extend: {
+      colors: {
+        darkGray: "#1A1A1A",
+        spaceGray: "#262627",
+        'basic-gray': '#3C3C3D',
+        'subtle-gray': '#6D6D6E',
+        lightGray: "#BCBCBC", 
+      },
+      fontSize: {
+        '3xl': '1.75rem'
+      },
       transitionProperty: {
         'width': 'width',
       },

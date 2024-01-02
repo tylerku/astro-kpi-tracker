@@ -23,9 +23,9 @@ const MyApp = ({ Component, pageProps }: any) => {
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
-        <div className='flex'>
+        <div className='flex bg-darkGray h-full'>
           { !isLoginRoute && <Navbar /> }
-          <div className={`${isLoginRoute ? 'w-full' : 'w-[88%]'}`}>
+          <div className={`${isLoginRoute ? 'w-full' : 'grow'}`}>
             <Component {...pageProps} />
           </div>
         </div>

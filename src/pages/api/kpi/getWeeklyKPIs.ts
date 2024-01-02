@@ -9,7 +9,6 @@ export default async function handler(
   try {
     const userIdParam = request.query['userId'];
     const userId = Number(userIdParam)
-    console.log('hello there: userId: ', userId)
     const result = await kpiService.getThisWeeksKPIs(userId, TIMEZONE.MST)
     return response.status(200).json({
       data: result

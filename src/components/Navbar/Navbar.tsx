@@ -10,12 +10,10 @@ const Navbar: React.FC<any> = () => {
   const router = useRouter()
 
   return(
-    <nav className='w-[12%] bg-spaceGray h-screen'>
+    <nav className='w-[5%] bg-spaceGray my-5 ml-5 rounded-lg'>
       <Logo />
       <ul className='flex flex-col'>
-        <NavbarItem route={router.pathname} href='/home'>Home</NavbarItem>
-        <NavbarItem route={router.pathname} href='/about'>About</NavbarItem>
-        {/* <NavbarItem route={router.pathname} href='/about'>Account</NavbarItem> */}
+        <NavbarItem route={router.pathname} href='/home' icon='home'>Home</NavbarItem>
       </ul>
     </nav>
   )
@@ -23,7 +21,7 @@ const Navbar: React.FC<any> = () => {
 
 const Logo: React.FC<any> = () => {
   return (
-    <div className='px-2 py-10 flex flex-col 2xl:flex-row items-center justify-center'>
+    <div className='px-2 py-10 flex flex-col items-center justify-center'>
       <div className='w-8 aspect-square relative mx-4'>
         <Image src='/logo.svg' alt='logo' fill/>
       </div>
@@ -37,11 +35,18 @@ const Logo: React.FC<any> = () => {
 interface NavBarItemProps {
   href: string
   route: string
+  icon: 'home'
   children: React.ReactNode
 }
 const NavbarItem: React.FC<NavBarItemProps> = (props) => {
   return(
-    <Link className={`${props.route === props.href ? 'bg-[#6E6E8199]' : ''} hover:bg-[#6E6E8199] transition-all duration-300 hover:ease-in ease-out p-1 my-1 mx-8 text-center rounded text-base font-bold`} href={props.href}>{props.children}</Link>
+    <Link href={props.href} className='w-full flex justify-center items-center'>
+      <div className='transition aspect-square w-8 relative hover:scale-[95%] cursor-pointer'>
+        <Image src='/home-icon.svg' fill alt={'home'} />
+      </div>
+    </Link>
+    
+    
 
   )
 }
