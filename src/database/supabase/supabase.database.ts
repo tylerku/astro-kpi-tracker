@@ -122,7 +122,6 @@ export default class SupabaseDatabase implements IDatabase {
         if (!error.message) error.message = 'Failed to upsert daily KPI for reasons unknown'
         throw error
       }
-      console.log('DATA RETURNED: ', data)
       return kpi
   }
 }

@@ -239,11 +239,15 @@ const KPISection: React.FC<KPISection> = (props) => {
   const handleIncrementClicked = async (kpi: DailyKPI) => {
     try{
       console.log('going to make request...')
+      dispatch(incrementKPI({
+        date: today as `${number}-${number}-${number}`,
+        kpi
+      }))
       const resp = await axios.post('/api/kpi/increment', {kpi})
-      if (resp.status === 200) {
-        dispatch(incrementKPI({
+      if (resp.status !== 200) {
+        dispatch(decrementKPI({
           date: today as `${number}-${number}-${number}`,
-          kpi
+          kpi 
         }))
       }
     } catch (error) {

@@ -58,7 +58,7 @@ const ProgressItemCard: React.FC<GoalProgressItem> = (props) => (
         {props.value} / {props.goal * 5}
       </div>
     </div>
-    <ProgressBar goal={props.goal} value={props.value}/>
+    <ProgressBar goal={props.goal*5} value={props.value}/>
   </div>
 )
 
