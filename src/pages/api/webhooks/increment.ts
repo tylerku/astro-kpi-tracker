@@ -11,13 +11,13 @@ export default async function GET(
     console.log(
       'body: ', request.body
     )
-    if (!request.body.astro_user_id) {
+    if (!request.body.customData.astro_user_id) {
       return response.status(400).json({
         errorMessage: 'No astro_user_id provided',
       }); 
     }
 
-    const user = await userService.getUserById(request.body.astro_user_id)
+    const user = await userService.getUserById(request.body.customData.astro_user_id)
     
     // 2. Get all KPI definitions for the user
     const userId = user && !isNaN(Number(user.id)) ? Number(user!.id) : undefined
@@ -29,8 +29,13 @@ export default async function GET(
 
     const kpis = await kpiService.getKPIsForUser(userId)
 
-    // find the kpi that matches the request.body.kpi_name
-    const kpi = kpis.find(kpi => kpi.name === request.body.kpi_name)
+    // find the kpi that matches the request.body.customData.kpi_name
+    if (!request.body.customData.kpi_name) {
+      return response.status(400).json({
+        errorMessage: 'No kpi_name provided',
+      });
+    }
+    const kpi = kpis.find(kpi => kpi.name === request.body.customData.kpi_name)
     if (!kpi) {
       return response.status(400).json({
         errorMessage: 'No kpi found for the provided kpi_name',
