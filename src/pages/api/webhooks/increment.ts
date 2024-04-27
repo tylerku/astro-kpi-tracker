@@ -8,6 +8,9 @@ export default async function GET(
   response: NextApiResponse,
 ){
     // 1. Get the user tied to the passed in ID
+    console.log(
+      'body: ', request.body
+    )
     if (!request.body.astro_user_id) {
       return response.status(400).json({
         errorMessage: 'No astro_user_id provided',
