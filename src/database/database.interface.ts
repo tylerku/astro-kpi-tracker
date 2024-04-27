@@ -2,6 +2,7 @@ import { DailyKPI, TIMEZONE, User } from '@/models'
 
 interface IDatabase {
   getUserByAuthProviderId(authProviderId: string): Promise<User | undefined>
+  getUserById(id: number): Promise<User | undefined>
   createUser(user: Omit<User, 'id'>): Promise<User | undefined>
   getDailyKPIsByUser: (userId: number) => Promise<DailyKPI[]>
   getTodaysLatestKPIEntries: (kpiIDs: string[], timezone: TIMEZONE) => Promise<DailyKPI[]>

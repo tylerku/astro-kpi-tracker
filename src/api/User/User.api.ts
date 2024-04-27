@@ -13,6 +13,10 @@ export default class UserAPI implements IUserAPI {
     return await this.database.getUserByAuthProviderId(authProviderId)
   }
 
+  async getUserById(id: number): Promise<User | undefined> {
+    return await this.database.getUserById(id)
+  }
+
   async createUser(user: User): Promise<User | undefined> {
     return await this.database.createUser(user)
   }

@@ -8,6 +8,10 @@ export default class KPIService {
     this.api = api
   }
 
+  getKPIsForUser(userId: number): Promise<DailyKPI[]> {
+    return this.api.getKPIsForUser(userId)
+  }
+
   getTodaysKPIs(userId: number, timezone: TIMEZONE): Promise<DailyKPI[]> {
     return this.api.getTodaysKPIs(userId, timezone)
   }

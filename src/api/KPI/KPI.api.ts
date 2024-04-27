@@ -11,6 +11,10 @@ export default class KPIAPI implements IKPIAPI {
     this.database = database
   }
 
+  getKPIsForUser = async (userId: number) => {
+    return await this.database.getDailyKPIsByUser(userId)
+  }
+
   getTodaysKPIs = async (userId: number, userTimezone: TIMEZONE) => {
     const kpiDefinitions = await this.database.getDailyKPIsByUser(userId)
     const kpiDefinitionIDs = kpiDefinitions.map((kpi) => kpi.definitionId ?? '')
@@ -30,7 +34,7 @@ export default class KPIAPI implements IKPIAPI {
     try {
       const kpiDefinitions = await this.database.getDailyKPIsByUser(userId)
       const kpiDefinitionIDs = kpiDefinitions.map((kpi) => kpi.definitionId ?? '') 
-      
+
       const weeksKPIEntries = await this.database.getWeeksLatestDailyKPIEntries(kpiDefinitionIDs, TIMEZONE.MST)
       const result: Record<string, DailyKPI[]> = {}
 

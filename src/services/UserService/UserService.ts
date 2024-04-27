@@ -12,6 +12,10 @@ export default class UserService {
     return await this.api.getUserByAuthProviderId(authProviderId)
   }
 
+  async getUserById(id: number): Promise<User | undefined> {
+    return await this.api.getUserById(id)
+  }
+
   async createUser(user: Omit<User, 'id'>): Promise<User | undefined> {
     return await this.api.createUser(user)
   }

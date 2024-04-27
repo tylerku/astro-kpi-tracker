@@ -35,6 +35,16 @@ export default class SupabaseDatabase implements IDatabase {
     return data ?? undefined
   }
 
+  getUserById = async (id: number): Promise<User | undefined> => {
+    const {data, error} = await this.supabase
+      .from('user')
+      .select('*')
+      .eq('id', id)
+      .single();
+    if (error) throw error
+    return data ?? undefined
+  }
+
   createUser = async (user: Omit<User, 'id'>): Promise<User | undefined> => {
     const { firstName, lastName, authProviderId, email } = user;
     const {data, error} = await this.supabase

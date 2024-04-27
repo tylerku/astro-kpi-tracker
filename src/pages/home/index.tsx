@@ -42,6 +42,7 @@ const HomePage: React.FC<HomePageProps> = (props) => {
     const resp = await axios.get(`/api/kpi/getWeeklyKPIs?userId=${user.id}`)
     const axiosData = resp.data
     const weeklyKPIs: Record<string, DailyKPI[]> = axiosData.data
+    console.log('weeklyKPIs: ', weeklyKPIs)      
     dispatch(initializeKPIs(weeklyKPIs))
   }
   
@@ -225,7 +226,6 @@ const TodaySection: React.FC<TodaySectionProps> = (props) => {
     </div>
   )
 }
-
 interface KPISection {
   className?: string
 }
@@ -238,7 +238,6 @@ const KPISection: React.FC<KPISection> = (props) => {
 
   const handleIncrementClicked = async (kpi: DailyKPI) => {
     try{
-      console.log('going to make request...')
       dispatch(incrementKPI({
         date: today as `${number}-${number}-${number}`,
         kpi
