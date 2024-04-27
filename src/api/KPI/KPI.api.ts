@@ -23,7 +23,7 @@ export default class KPIAPI implements IKPIAPI {
       const kpiEntry = latestKPIEntries.find(entry => entry.definitionId === kpi.definitionId)
       return {
         ...kpi,
-        value: kpiEntry?.current ? Number(kpiEntry.current) : 0,
+        current: kpiEntry?.current ? Number(kpiEntry.current) : 0,
         timestamp: kpiEntry?.timestamp
       } as DailyKPI
     })

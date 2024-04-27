@@ -1,14 +1,14 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import kpiService from "@/services/KPIService";
-import { TIMEZONE } from "@/models";
+import { DailyKPI, TIMEZONE } from "@/models";
 
 
 export default async (req: NextApiRequest, res: NextApiResponse): Promise<void> => {
   const getMessageBody = async () => {
     const todaysKPIs: any[] = await kpiService.getTodaysKPIs(3, TIMEZONE.MST)
     let kpiNamesAndGoalsString = ''
-    todaysKPIs.forEach((kpi) => {
-      kpiNamesAndGoalsString += `${kpi.name}: ${kpi.value}/${kpi.goal}\n`
+    todaysKPIs.forEach((kpi: DailyKPI) => {
+      kpiNamesAndGoalsString += `${kpi.name}: ${kpi.current}/${kpi.goal}\n`
     })
     return `Ty's day today:\n\n${kpiNamesAndGoalsString}\nIf Ty didn't hit every goal tell him to pick it up`
   }
