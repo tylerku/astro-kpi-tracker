@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import kpiService from '@/services/KPIService';
 import userService from '@/services/UserService';
+import notionService from '@/services/NotionAPIService'
 import { TIMEZONE } from '@/models';
 
 export default async function GET(
@@ -52,10 +53,31 @@ export default async function GET(
       });
     }
 
+    // 4. Increment the KPI in Notion
+    const useNotion = true // turn this off later if I want
+    if (useNotion) {
+      try {
+        await incrementNotionKpi(request.body.customData.kpi_name)
+      } catch (error) {
+        return response.status(400).json({
+          errorMessage: error,
+        });
+      }
+    }
     const incrementedKPI = await kpiService.incrementKPI({...kpiToIncrement})
 
     return response.status(200).json({
         message: 'test ran successfuly',
         kpi: { ...incrementedKPI }
     });
+}
+
+
+const incrementNotionKpi = async (kpiName: string) => {
+  const kpis = await notionService.getTodaysKPIs([kpiName], {'Agent Conversations': 50})
+  if (kpis.length !== 1 || !kpis[0]) {
+    throw new Error('No kpi found for the provided kpi_name')
+  }
+  const kpiToUpdate = kpis[0]
+  await notionService.updateTodaysKPI('Agent Conversations', kpiToUpdate.value + 1)
 }
