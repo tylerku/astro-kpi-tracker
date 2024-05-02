@@ -1,6 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import propertyService from '@/services/PropertyService';
-import axios from 'axios';
 
 export default async function GET(
 	request: NextApiRequest,
@@ -21,7 +20,6 @@ export default async function GET(
 			})
 		})
 		const propertiesWithAgentInfo = await Promise.all(promises)
-		// const propertiesWithAgentInfo = properties
 		return response.status(200).json({ properties: propertiesWithAgentInfo } )
 	} catch (error) {
 		console.error('Error getting properties: ', error)
@@ -30,4 +28,5 @@ export default async function GET(
 		})
 	}
 }
+
 

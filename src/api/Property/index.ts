@@ -1,6 +1,9 @@
+import IZillowAPI from '../Zillow.interface'
 import PropertyAPI from './Property.api'
 import IPropertyAPI from './Property.interface'
+import { zillowBySwongF } from '@/sdk/RapidAPI'
 export type { IPropertyAPI }
 
-const propertyAPI = new PropertyAPI()
-export { propertyAPI }
+const zillowAPI: IZillowAPI = zillowBySwongF
+const propertyAPI = new PropertyAPI(zillowAPI)
+export default propertyAPI
