@@ -22,6 +22,7 @@ export default async function GET(
 		})
 		const propertiesWithAgentInfo = await Promise.all(promises)
     
+    // TODO: make the getPropertyDetails call happen in a loop so the console.log runs synchronously with the requests (get rid of the Promise.all)
     // TODO: filter out properties that don't have a listing agent phone number
     // TODO: filter out properties that are duplicates
     // TODO: require some sort of authentication to access this endpoint
