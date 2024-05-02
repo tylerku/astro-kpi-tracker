@@ -26,6 +26,7 @@ export default async function GET(
     // TODO: filter out properties that don't have a listing agent phone number
     // TODO: filter out properties that are duplicates
     // TODO: require some sort of authentication to access this endpoint
+    // TODO: cache the agents in the database to not have to refetch them on subsequent requests
     const filteredProperties = propertiesWithAgentInfo.filter((property: any) => property.listingAgentPhone)
 
     // remove objects that have the same phone number any property before it
