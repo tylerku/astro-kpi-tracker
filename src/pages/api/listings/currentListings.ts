@@ -21,6 +21,10 @@ export default async function GET(
 			})
 		})
 		const propertiesWithAgentInfo = await Promise.all(promises)
+    
+    // TODO: filter out properties that don't have a listing agent phone number
+    // TODO: filter out properties that are duplicates
+    // TODO: require some sort of authentication to access this endpoint
     const filteredProperties = propertiesWithAgentInfo.filter((property: any) => property.listingAgentPhone)
 
     // remove objects that have the same phone number any property before it
