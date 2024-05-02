@@ -7,22 +7,10 @@ export default async function GET(
 	response: NextApiResponse,
 ){
 	try {
-		const properties = await propertyService.getProperties('Knoxville, TN')
-		const promises = properties.map((property, index ) => {
-			return new Promise(async (resolve, reject) => {
-				try {
-					await new Promise(resolve => setTimeout(resolve, index * 1000))
-					console.log('running request ', index, ' for property: ', property.address)	
-					const propertyWithDetails = await propertyService.getPropertyDetails(property)
-					resolve(propertyWithDetails)
-				} catch (error) {
-					reject(error)
-				}
-			})
-		})
-		const propertiesWithAgentInfo = await Promise.all(promises)
-		// const propertiesWithAgentInfo = properties
-		return response.status(200).json({ properties: propertiesWithAgentInfo } )
+		// get location from request
+		const location = request.query.location as string
+		const properties = await propertyService.getProperties(location.trim())
+		return response.status(200).json({ properties: properties, count: properties.length } )
 	} catch (error) {
 		console.error('Error getting properties: ', error)
 		return response.status(500).json({
