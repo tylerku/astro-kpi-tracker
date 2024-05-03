@@ -69,10 +69,11 @@ export default async function GET(
 
 
 const incrementNotionKpi = async (kpiName: string) => {
-  const kpis = await notionService.getTodaysKPIs([kpiName], {'Agent Conversations': 50})
+  const kpis = await notionService.getTodaysKPIs([kpiName], {})
   if (kpis.length !== 1 || !kpis[0]) {
     throw new Error('No kpi found for the provided kpi_name')
   }
   const kpiToUpdate = kpis[0]
-  await notionService.updateTodaysKPI('Agent Conversations', kpiToUpdate.value + 1)
+  await notionService.updateTodaysKPI(kpiName, kpiToUpdate.value + 1)
+  console.log('Updated notion KPI', kpiName, 'to', kpiToUpdate.value + 1)
 }
