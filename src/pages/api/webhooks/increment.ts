@@ -53,6 +53,7 @@ export default async function GET(
     const useNotion = true
     if (useNotion) {
       try {
+        // TODO: Create a lock on database 
         await incrementNotionKpi(request.body.customData.kpi_name)
       } catch (error) {
         return response.status(400).json({
