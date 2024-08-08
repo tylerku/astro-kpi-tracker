@@ -63,7 +63,8 @@ export default class ZillowBySwongF implements IZillowSDK {
       while (allProperties.length < TOTAL_PROPERTIES && attempts < MAX_ATTEMPTS) {
         while(cursor < response.data.totalResultCount) {
           response = await axios.request(options)
-          await new Promise(resolve => setTimeout(resolve, 500)) // wait 500ms to avoid rate limiting
+          await new Promise(resolve => setTimeout(resolve, 600)) // wait 500ms to avoid rate limiting
+          console.log(cursor, ' / ', response.data.totalResultCount)
           const properties = await response.data.props.map((prop: any, index: number) => {
             return getPropertyFromZillowObj(prop)
           })
