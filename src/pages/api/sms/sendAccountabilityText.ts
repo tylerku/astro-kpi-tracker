@@ -16,7 +16,7 @@ export default async (req: NextApiRequest, res: NextApiResponse): Promise<void> 
     return `Ty's day today:\n\n${kpiNamesAndGoalsString}\nIf Ty didn't hit every goal tell him to pick it up`
     */
     // KPIs from notion
-    const kpis = await NotionAPIService.getTodaysKPIs(['Agent Conversations', 'Seller Conversations', 'Verbal Offers', 'Written Offers', 'Buyers Added'], {'Agent Conversations': 50, 'Seller Conversations': 20, 'Verbal Offers': 5, 'Written Offers': 1, 'Buyers Added': 2})
+    const kpis = await NotionAPIService.getTodaysKPIs(['Agent Conversations', 'Seller Conversations', 'Verbal Offers', 'Contracts', 'Buyers Added'], {'Agent Conversations': 50, 'Seller Conversations': 20, 'Verbal Offers': 5, 'Contracts': 1, 'Buyers Added': 2})
     let kpiString = ''
     kpis.forEach((kpi) => {
       kpiString += `${kpi.key}: ${kpi.value}/${kpi.goal}\n`
