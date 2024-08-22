@@ -7,7 +7,7 @@ export default async function GET(
 	response: NextApiResponse,
 ){
 	try {
-		const properties = await propertyService.getProperties('Tampa, FL')
+		const properties = await propertyService.getProperties('Nashville, TN')
 		const promises = properties.map((property, index ) => {
 			return () => new Promise(async (resolve, reject) => {
 				try {
@@ -47,6 +47,11 @@ export default async function GET(
     const uniqueProperties = propertiesWithAgentPhoneNumber.filter((property: any, index: number) => {
       return index === propertiesWithAgentPhoneNumber.findIndex((prop: any) => prop.listingAgentPhone === property.listingAgentPhone)
     })
+
+
+		console.log('Properties searched:', properties.length)
+		console.log('Properties with agent info:', propertiesWithAgentInfo.length)
+		console.log('Unique properties with agent info:', uniqueProperties.length)
 
 
 		return response.status(200).json({ properties: uniqueProperties, count: uniqueProperties.length } )
