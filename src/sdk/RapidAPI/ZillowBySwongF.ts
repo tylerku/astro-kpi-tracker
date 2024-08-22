@@ -58,10 +58,11 @@ export default class ZillowBySwongF implements IZillowSDK {
     options.params.minPrice = `${minPrice}`
     options.params.maxPrice = `${maxPrice}`
     console.log('pulling properties between $', minPrice, ' and $', maxPrice)
-
+    
     try {
       while (allProperties.length < TOTAL_PROPERTIES && attempts < MAX_ATTEMPTS) {
-        while(cursor < response.data.totalResultCount) {
+        // TODO: Break down the min and max property price more to get the full range of listings instead of stopping when page = 20 (aka total pages)
+        while(cursor < response.data.totalResultCount && page <= response.data.totalPages) {
           response = await axios.request(options)
           await new Promise(resolve => setTimeout(resolve, 600)) // wait 500ms to avoid rate limiting
           console.log(cursor, ' / ', response.data.totalResultCount)
