@@ -7,8 +7,8 @@ export default async function GET(
 	try {
 		// get location from request
     try {
-		  const body = JSON.parse(request.body) 
-      console.log('body', body)
+		  const body = request.body
+      console.log('body: ', body)
 		  return response.status(200).json({body})
     } catch (error) {
       console.error('Error parsing body: ', error)
