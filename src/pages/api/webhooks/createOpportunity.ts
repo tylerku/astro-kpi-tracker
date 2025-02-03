@@ -1,6 +1,4 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import propertyService from '@/services/PropertyService';
-import axios from 'axios';
 
 export default async function GET(
 	request: NextApiRequest,
