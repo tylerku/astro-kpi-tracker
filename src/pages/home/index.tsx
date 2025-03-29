@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { useState } from "react";
 import React, { useEffect } from "react";
-import {PageWrapper, DropdownMenu, SettingsButton} from '../../components'
+import {PageWrapper, DropdownMenu, SettingsButton, BasicButton} from '../../components'
 import { SingleBarGraph, BarGraph, TimeDisplay, SingleBarGraphOption, BarGraphOption, KPICard, GoalsBoard, GoalsCardOption, GoalProgressItem } from "../../components/Dashboard";
 import notionAPIService, { notionKPI } from "../../services/NotionAPIService";
 import moment from 'moment-timezone'
@@ -55,6 +55,15 @@ const HomePage: React.FC<HomePageProps> = (props) => {
       router.push('/auth/logout') 
     } catch (error) {
       console.log('Error logging out: ', error)
+    }
+  }
+
+  const handleTestAIClicked = async () => {
+    try {
+      const resp = await axios.post('/api/crm/conversations/zOJ1F8VhO7U5FBMt5IC1/generateResponse')
+      console.log('AI response: ', resp.data)
+    } catch (error) {
+      console.error('Error testing AI: ', error)
     }
   }
 
@@ -160,7 +169,11 @@ const HomePage: React.FC<HomePageProps> = (props) => {
             <GraphsSection className={'w-[50%]'/*'grow-2 lg:grow-3'*/} options={barGraphOptions ?? []} />
           </div>
           <div className='w-full h-[50%] grow space-x-6 max-h-[50%] relative flex flex-row'>
-            <GoalsBoard className='w-[50%] max-w-[50%] h-full' options={getGoalsBoardOptions()}/>            
+            <GoalsBoard className='w-[50%] max-w-[50%] h-full' options={getGoalsBoardOptions()}/> 
+            <BasicButton onClick={() => {
+              router.push(`/api/auth/crm/start`)    
+            }} text={'Connect Go High Level'}/>           
+            <BasicButton onClick={() => handleTestAIClicked()} text={'Test AI'}/>
           </div>
         </div>
         <div className='hidden xl:flex h-full w-[25%] bg-spaceGray max-w-[400px]'>

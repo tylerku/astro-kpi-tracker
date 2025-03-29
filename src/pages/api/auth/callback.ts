@@ -66,7 +66,7 @@ export default async (req: NextApiRequest, res: NextApiResponse): Promise<void> 
     const user = await getUserFromAccessToken(accessToken)
     res.status(200).json({ success: true, user: {...user}});
   } catch (error) {
-    console.error('Error during OAuth2 callback:', error);
+    console.error('Error during OAuth2 callback flow:', error);
     res.status(500).json({ error: 'OAuth2 callback failed' });
   }
 };

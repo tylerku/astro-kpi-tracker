@@ -6,6 +6,8 @@ import RingLoader from "react-spinners/RingLoader";
 import { useDispatch } from 'react-redux';
 import { setCurrentUser } from '@/redux/Auth.slice'
 
+// import { googleConfig } from '../../../googleConfig';
+
 const CallbackPage: React.FC = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
@@ -19,7 +21,8 @@ const CallbackPage: React.FC = () => {
   const saveAccessTokenFromAuthCode = async (authCode: string) => {
     if (authCode) {
       try {
-        const resp = await fetch('/api/auth/callback', {
+        console.log('getting access token from auth code: ', authCode)
+        const resp = await fetch('/api/auth/crm/callback', {
           method: 'POST',
           body: JSON.stringify({ code: authCode }),
           headers: {
@@ -27,11 +30,11 @@ const CallbackPage: React.FC = () => {
           },
         })
         const data = await resp.json()
-        const user = data.user
-        dispatch(setCurrentUser(user))
+        //const user = data.user
+        //dispatch(setCurrentUser(user))
         router.push('/home')
       } catch (error) {
-        console.error('Error during OAuth2 callback:', error);
+        console.error('Error during OAuth2 astroblasterrr callback:', error);
       }
       setIsLoading(false);
       return null
