@@ -100,6 +100,36 @@ export default class GoHighLevelAPI implements ICRMAPI, IOAuth2API {
     });   
   }
 
+  searchContacts = async (searchTerm: string, auth: OAuth2Credentials): Promise<Conversation[]> => {
+    const url = `${process.env.GO_HIGH_LEVEL_API_BASE_URL}/conversations/search`;
+    const options = {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${auth.accessToken}`,
+        Version: '2021-04-15',
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      },
+      data: {
+        query: searchTerm,
+        limit: 10,
+        offset: 100
+      }
+    }
+
+    try {
+      const response = await axios.post(url, options.data, { headers: options.headers });
+      const conversations = response.data?.conversations ?? [];
+      return conversations.map((conversation: any) => ({
+        conversationId: conversation.id,
+        contactId: conversation.contactId
+      }));
+    } catch (error) {
+      console.error('Error searching conversations:', error);
+      return [];
+    }
+  }
+
   getMessages = async (conversationId: string, auth: GHLCredentials): Promise<Message[]> => {
     const url = `${process.env.GO_HIGH_LEVEL_API_BASE_URL}/conversations/${conversationId}/messages`;
     const options = {
