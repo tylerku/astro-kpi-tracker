@@ -1,6 +1,4 @@
-import ICRMAPI from './CRM.api.interface';
-import { GetAuthObjectRequestParams } from './CRM.auth';
-import GoHighLevelAPI from './GoHighLevel';
+import GoHighLevelAPI, { IGoHighLevelAPI } from './GoHighLevel';
 
-export type { ICRMAPI, GetAuthObjectRequestParams };
+export type { IGoHighLevelAPI };
 export { GoHighLevelAPI };

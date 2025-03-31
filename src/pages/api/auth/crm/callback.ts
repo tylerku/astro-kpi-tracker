@@ -9,13 +9,13 @@ import userService from '@/services/UserService';
 import { User } from '@/models';
 import tokenService from '@/services/TokenService'; // Hypothetical token service
 import { PrismaClient } from '@prisma/client';
-import CRMService from '@/services/CRMService';
+import crmService from '@/services/CRMService';
 
 export default async (req: NextApiRequest, res: NextApiResponse): Promise<void> => {
   try {
     const { code } = req.body;
     if (!code) { return res.status(400).json({ error: 'No code provided' }); }
-    const auth = await CRMService.getInstance().getAuthObject({code});
+    const auth = await crmService.getAuthCredentials({code});
 
     const accessToken = auth.accessToken;
     const refreshToken = auth.refreshToken;

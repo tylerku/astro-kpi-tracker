@@ -60,8 +60,8 @@ const HomePage: React.FC<HomePageProps> = (props) => {
 
   const handleTestAIClicked = async () => {
     try {
-      const resp = await axios.post('/api/crm/conversations/zOJ1F8VhO7U5FBMt5IC1/generateResponse')
-      console.log('AI response: ', resp.data)
+      const resp = await axios.get('/api/crm/trainingData/chatgpt')
+      console.log('Training Data response: ', resp.data)
     } catch (error) {
       console.error('Error testing AI: ', error)
     }

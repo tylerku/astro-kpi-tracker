@@ -1,7 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import cookies from "cookies";
-import CRMService from "@/services/CRMService/CRMService";
-import { CRMAuth } from "@/api/crm"
+import { crmService } from "@/services";
 
 
 export default async (req: NextApiRequest, res: NextApiResponse): Promise<void> => {
@@ -13,14 +12,7 @@ export default async (req: NextApiRequest, res: NextApiResponse): Promise<void> 
       throw new Error('No crmAccessToken found. Cannot access crm api');
     }
 
-    console.log('Date: ', new Date(Date.now()))
-    const auth: CRMAuth = {
-      accessToken: crmAccessToken,
-      refreshToken: '',
-      expiresIn: 0,
-    }
-    const resp = await CRMService.getInstance().getMessages(conversationId, auth);
-    console.log('Response in /api/crm/getMessages from CRMService.getMessages: ', resp);
+    const resp = await crmService.getMessages(conversationId, crmAccessToken);
     return res.status(200).json(resp);
   } catch (error) {
     console.log('Error getting crm messages: ', error);

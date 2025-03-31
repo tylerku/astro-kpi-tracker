@@ -1,9 +1,11 @@
-import ICRMAPI from '../CRM.api.interface'
 import { GHLSMSMessage, Message } from '@/models/Message'
+import { GHLContact } from '@/models/Contact';
+import IGoHighLevelAPI, { SearchContactsResult } from './GoHighLevel.api.interface';
 import axios from 'axios';
 import prisma from '@/prisma/prisma';
 import { OAuth2Credentials } from '@/models/auth';
 import { IOAuth2API, OAuth2CredentialsRequestParams } from '@/api/OAuth2.interface';
+import jwt from 'jsonwebtoken';
 
 interface GHLCredentials extends OAuth2Credentials {
   scope: string;
@@ -13,7 +15,12 @@ interface GHLCredentials extends OAuth2Credentials {
   companyId: string;
 }
 
-export default class GoHighLevelAPI implements ICRMAPI, IOAuth2API {
+interface JWTPayload {
+  authClass: string
+  authClassId: string
+}
+
+export default class GoHighLevelAPI implements IGoHighLevelAPI, IOAuth2API {
   constructor(){
 
   }
@@ -100,42 +107,65 @@ export default class GoHighLevelAPI implements ICRMAPI, IOAuth2API {
     });   
   }
 
-  searchContacts = async (searchTerm: string, auth: OAuth2Credentials): Promise<Conversation[]> => {
-    const url = `${process.env.GO_HIGH_LEVEL_API_BASE_URL}/conversations/search`;
+  searchContacts = async (tags: string[], pageLimit: number, accessToken: string, searchAfter: any[]): Promise<SearchContactsResult> => {
+    const url = `${process.env.GO_HIGH_LEVEL_API_BASE_URL}/contacts/search`;
+    if (tags.length === 0) {
+      throw Error('No tags provided for search. Returning empty result.');
+    }
+    const decodedToken = jwt.decode(accessToken) as JWTPayload;
+    if (decodedToken.authClass !== 'Location') {
+      throw Error('Access token does not belong to a Location. Cannot search contacts. Only location ID implemented');
+    }
     const options = {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${auth.accessToken}`,
+        Authorization: `Bearer ${accessToken}`,
         Version: '2021-04-15',
         Accept: 'application/json',
         'Content-Type': 'application/json'
       },
       data: {
-        query: searchTerm,
-        limit: 10,
-        offset: 100
+        "locationId": decodedToken.authClassId,
+        "pageLimit": pageLimit,
+        "searchAfter": searchAfter,
+        "filters": [
+          {
+            "field": "tags",
+            "operator": "eq",
+            "value": tags
+          }
+        ]
       }
     }
 
     try {
       const response = await axios.post(url, options.data, { headers: options.headers });
-      const conversations = response.data?.conversations ?? [];
-      return conversations.map((conversation: any) => ({
-        conversationId: conversation.id,
-        contactId: conversation.contactId
-      }));
+      const contacts = response.data?.contacts ?? [];
+      const ghlContacts = contacts.map((contact: any) => ({
+        id: contact.id,
+        firstName: contact.firstNameLowerCase ?? '',
+        lastName: contact.lastNameLowerCase ?? '',
+        email: contact.email ?? '',
+        phone: contact.phone ?? '',
+        locationId: contact.locationId ?? 'unknown',
+        searchAfter: contact.searchAfter ?? [], // Used for pagination
+      } as GHLContact));
+      return {
+        contacts: ghlContacts,
+        total: response.data?.total ?? 0,
+      } as SearchContactsResult;
     } catch (error) {
-      console.error('Error searching conversations:', error);
-      return [];
+      console.error('Error searching contacts:', error);
+      throw error;
     }
   }
 
-  getMessages = async (conversationId: string, auth: GHLCredentials): Promise<Message[]> => {
+  getMessages = async (conversationId: string, accessToken: string): Promise<Message[]> => {
     const url = `${process.env.GO_HIGH_LEVEL_API_BASE_URL}/conversations/${conversationId}/messages`;
     const options = {
       method: 'GET',
       headers: {
-        Authorization: `Bearer ${auth.accessToken}`,
+        Authorization: `Bearer ${accessToken}`,
         Version: '2021-04-15',
         Accept: 'application/json',
       },
