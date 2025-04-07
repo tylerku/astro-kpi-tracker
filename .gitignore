@@ -15,6 +15,9 @@ cache
 logs
 *.log
 
+# Training Data
+*.jsonl
+
 # Dependency directories
 /.pnp
 .pnp.js

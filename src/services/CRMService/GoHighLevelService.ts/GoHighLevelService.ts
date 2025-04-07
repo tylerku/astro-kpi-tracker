@@ -1,11 +1,20 @@
 import { IGoHighLevelAPI, GoHighLevelAPI } from "@/api/crm"
 
 import ICRMService from "@/services/CRMService/CRMService.interface";
-import { Message } from "@/models/Message";
+import { GHLSMSMessage, Message } from "@/models/Message";
+import { GHLConversation } from "@/models/Conversation";
 import { GHLContact } from "@/models/Contact";
 import { OAuth2Credentials } from "@/models/auth";
 import { IOAuth2API, OAuth2CredentialsRequestParams } from "@/api/OAuth2.interface";
 import { content_v2_1 } from "googleapis";
+import { FineTuningJobsPage } from "openai/resources/fine-tuning/jobs/jobs";
+
+type OpenAITrainingData = {
+  messages: {
+    role: "user" | "assistant" | "system"
+    content: string
+  }[]
+}
 
 export default class GoHighLevelService implements ICRMService, IOAuth2API{
   
@@ -18,15 +27,18 @@ export default class GoHighLevelService implements ICRMService, IOAuth2API{
   getOAuth2URL = (): string => {
     return this.api.getOAuth2URL()
   }
-  
-  getMessages = async (conversationId: string, accessToken: string): Promise<Message[]> => {
-    return this.api.getMessages(conversationId, accessToken)
+
+  getChatGPTTrainingData = async (accessToken: string): Promise<any[]> => {
+    const contacts = await this.getContacts(100, ['realtor'], accessToken)
+    const conversationMetadata = await this.getConversations(contacts, accessToken)
+    const messages = await this.getMessages(conversationMetadata, 8, accessToken)
+    const formattedMessages = this.formatMessagesForChatGPT(messages)
+    return formattedMessages;
   }
 
-  getChatGPTTrainingData = async (accessToken: string): Promise<GHLContact[]> => {
-    const pageLimit = 100
+  private getContacts = async (amount: 'all' | number, tags: string[], accessToken: string): Promise<GHLContact[]> => {
+    const pageLimit = amount !== 'all' && amount < 100 ? amount : 100
     const logContactProgress = (numContacts: number) => console.log(`Fetching contacts ${numContacts} - ${numContacts + pageLimit}`)
-    const tags = ['realtor']
     let searchAfter: any[] = []
     let contacts: GHLContact[] = []
 
@@ -35,7 +47,7 @@ export default class GoHighLevelService implements ICRMService, IOAuth2API{
       let result = await this.api.searchContacts(tags, pageLimit, accessToken, searchAfter);
       const totalContacts = result.total
       contacts = contacts.concat(result.contacts)
-      while (contacts.length < totalContacts) {
+      while (contacts.length < (amount === 'all' ? totalContacts : Number(amount)))  {
         await new Promise(resolve => setTimeout(resolve, 110)); // Adding a delay to avoid hitting rate limits
         searchAfter = result.contacts.slice(-1)[0].searchAfter // Assuming the last contact's ID can be used for pagination
         logContactProgress(contacts.length)
@@ -44,9 +56,101 @@ export default class GoHighLevelService implements ICRMService, IOAuth2API{
       }
       console.log(`Total contacts fetched: ${contacts.length}`)
     } catch (error) {
-      console.error('Error searching contacts:', error);
+      console.error('Error searching GHL contacts:', error);
       throw new Error('Failed to fetch contacts from GoHighLevel');
     }
     return contacts
+  }
+
+  private getConversations = async (contacts: GHLContact[], accessToken: string): Promise<GHLConversation[]> => {
+    let conversations: GHLConversation[] = []
+    for (const contact of contacts) {
+      try {
+        console.log(`fetching conversation ${conversations.length + 1} / ${contacts.length} (${contact.id})`)
+        const result = await this.api.searchConversations(contact.id, accessToken)
+        await new Promise(resolve => setTimeout(resolve, 110)); //avoid rate limiting
+        conversations = conversations.concat(result.conversations)
+      } catch (error) {
+        console.error(`Error fetching GHL conversations for contact ${contact.id}:`, error);
+        throw error
+      }
+    }
+    console.log(`Total conversations fetched: ${conversations.length}`)
+    return conversations
+  }
+
+  private getMessages = async (conversations: GHLConversation[], messagesPerConvo: number, accessToken: string): Promise<GHLSMSMessage[]> => {
+    let messages: GHLSMSMessage[] = []
+    let counter = 0;
+    for (const conversation of conversations) {
+      try {
+        console.log(`fetching messsage group ${++counter} / ${conversations.length} (conversation: ${conversation.id})`)
+        const result = await this.api.getMessages(conversation.id, messagesPerConvo, accessToken)
+        await new Promise(resolve => setTimeout(resolve, 50)); //avoid rate limiting
+        messages = messages.concat(result)
+      } catch (error) {
+        console.error(`Error fetching GHL messages for conversation ${conversation.id}:`, error);
+        throw error
+      }
+    }
+    console.log(`Total messages fetched: ${messages.length}`)
+    return messages
+  } 
+
+  private formatMessagesForChatGPT = (messages: GHLSMSMessage[]): OpenAITrainingData[] => {
+    const trainingData: OpenAITrainingData[] = [];
+    let currentConvoId = ''
+    for (const message of messages) {
+      if (message.conversationId !== currentConvoId) {
+        trainingData.push({ messages: [] })
+        currentConvoId = message.conversationId
+        console.log('updated current convo id to: ', currentConvoId)
+      }
+      if (message.direction !== 'inbound' && message.direction !== 'outbound') {
+        console.log('skipping message due to invalid direction: ', message.direction)
+        continue;
+      }
+      if (!message.body) {
+        console.log('skipping message due to empty body')
+        continue;
+      }
+      if (message.body.length > 4000) {
+        console.log('skipping message due to body length')
+        continue;
+      }
+      if (message.body.length < 1) {
+        console.log('skipping message due to empty body')
+        continue;
+      }
+      if (message.status !== 'delivered' && message.status !== 'received') {
+        console.log('skipping message due to invalid status: ', message.status)
+        continue;
+      }
+
+      trainingData[trainingData.length - 1].messages.push({
+        role: message.direction === 'inbound' ? 'user' : 'assistant',
+        content: message.body,
+      });      
+    }
+
+    // the last message should be the assistant's response
+    for (const data of trainingData) {
+      while (data.messages.length > 0) {
+        const lastMessage = data.messages[data.messages.length - 1];
+        if (lastMessage.role === 'user') {
+          data.messages.pop(); // Remove the last message if it's from the user
+        } else {
+          break;
+        }
+      }
+    }
+
+    // remove empty training data
+    for (let i = trainingData.length - 1; i >= 0; i--) {
+      if (trainingData[i].messages.length === 0) {
+        trainingData.splice(i, 1);
+      }
+    }
+    return trainingData;
   }
 }

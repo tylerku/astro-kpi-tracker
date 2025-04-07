@@ -1,11 +1,12 @@
-import { GHLSMSMessage, Message } from '@/models/Message'
+import { GHLSMSMessage } from '@/models/Message'
 import { GHLContact } from '@/models/Contact';
-import IGoHighLevelAPI, { SearchContactsResult } from './GoHighLevel.api.interface';
+import IGoHighLevelAPI, { SearchContactsResult, SearchConversationsResult } from './GoHighLevel.api.interface';
 import axios from 'axios';
 import prisma from '@/prisma/prisma';
 import { OAuth2Credentials } from '@/models/auth';
 import { IOAuth2API, OAuth2CredentialsRequestParams } from '@/api/OAuth2.interface';
 import jwt from 'jsonwebtoken';
+import { GHLConversation } from '@/models/Conversation';
 
 interface GHLCredentials extends OAuth2Credentials {
   scope: string;
@@ -160,7 +161,46 @@ export default class GoHighLevelAPI implements IGoHighLevelAPI, IOAuth2API {
     }
   }
 
-  getMessages = async (conversationId: string, accessToken: string): Promise<Message[]> => {
+  searchConversations = async (contactId: string, accessToken: string): Promise<SearchConversationsResult> => {
+    const decodedToken = jwt.decode(accessToken) as JWTPayload;
+    if (decodedToken.authClass !== 'Location') {
+      throw Error('Access token does not belong to a Location. Cannot search contacts. Only location ID implemented');
+    } 
+    const options = {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        Version: '2021-04-15',
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      },
+      params: {
+        "locationId": decodedToken.authClassId,
+        "contactId": contactId,
+      }
+    }
+    
+    const url = `${process.env.GO_HIGH_LEVEL_API_BASE_URL}/conversations/search`;
+    try {
+      const response = await axios.get(url, options);
+      const conversationData = response.data?.conversations ?? [];
+      const ghlConvos = conversationData.map((conversation: any) => ({
+        id: conversation.id,
+        contactId: conversation.contactId,
+        locationId: conversation.locationId,
+        contactName: conversation.fullName
+      } as GHLConversation));
+      return {
+        conversations: ghlConvos,
+        total: response.data?.total ?? 0,
+      } as SearchConversationsResult;
+    } catch (error) {
+      console.error('Error searching conversations:', error);
+      throw error;
+    }
+  }
+
+  getMessages = async (conversationId: string, limit: number, accessToken: string): Promise<GHLSMSMessage[]> => {
     const url = `${process.env.GO_HIGH_LEVEL_API_BASE_URL}/conversations/${conversationId}/messages`;
     const options = {
       method: 'GET',
@@ -169,6 +209,7 @@ export default class GoHighLevelAPI implements IGoHighLevelAPI, IOAuth2API {
         Version: '2021-04-15',
         Accept: 'application/json',
       },
+      params: { limit }
     }
     const response = await axios.get(url, options);
     const responseMessages = response.data?.messages?.messages ?? undefined;
@@ -177,12 +218,13 @@ export default class GoHighLevelAPI implements IGoHighLevelAPI, IOAuth2API {
       const messages = responseMessages.map((message: any) => {
         return {
           body: message.body,
-          date: new Date(message.dateAdded),
+          timestamp: new Date(message.dateAdded),
           status: message.status,
-          direction: message.direction
+          direction: message.direction,
+          conversationId: conversationId
         } as GHLSMSMessage;
       });
-      return messages;
+      return messages.reverse();
     }
     return [];
   }

@@ -2,12 +2,11 @@ export interface Message {
   id: string;
   body: string;
   timestamp: Date;
+  direction: string;
 }
 
 export interface SMSMessage extends Message {
-  direction: string;
   status: string;
-  date: Date;
 }
 
 export interface GHLSMSMessage extends SMSMessage {
