@@ -40,9 +40,11 @@ class NotionAPIService {
       if (!result) return []
       const kpiValuesPromises = kpiNames.map(async (name) => {
         const object = result.properties[`${name}`] as {id: string, type: string, number: number}
+        console.log('object:', object)
+        console.log('object?.number:', object?.number)
         return {
           key: name,
-          value: object.number as number ?? 0,
+          value: object?.number as number ?? 0,
           goal: kpiGoals[name] ?? 0
         } as notionKPI
       })
@@ -92,7 +94,7 @@ class NotionAPIService {
       })
       return thisWeeksKPIs
     } catch (error) {
-      console.log('Error getting todays KPIs: ', error);
+      console.log('Error getting this weeks KPIs: ', error);
       throw(error)
     }
   }
