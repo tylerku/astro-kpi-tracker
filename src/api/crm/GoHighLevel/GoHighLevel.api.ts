@@ -81,7 +81,6 @@ export default class GoHighLevelAPI implements IGoHighLevelAPI, IOAuth2API {
         locationId: data.locationId,
         companyId: data.companyId,
       };
-      console.log('auth: ', auth);
       await this.storeAuthCredentials(auth);
       return auth;
     } catch (error) {

@@ -11,9 +11,10 @@ import { FineTuningJobsPage } from "openai/resources/fine-tuning/jobs/jobs";
 
 type OpenAITrainingData = {
   messages: {
-    role: "user" | "assistant" | "system"
-    content: string
-  }[]
+    role: "user" | "assistant" | "system";
+    timestamp?: Date;
+    content: string;
+  }[];
 }
 
 export default class GoHighLevelService implements ICRMService, IOAuth2API{
@@ -29,9 +30,9 @@ export default class GoHighLevelService implements ICRMService, IOAuth2API{
   }
 
   getChatGPTTrainingData = async (accessToken: string): Promise<any[]> => {
-    const contacts = await this.getContacts(100, ['realtor'], accessToken)
+    const contacts = await this.getContacts(800, ['realtor'], accessToken)
     const conversationMetadata = await this.getConversations(contacts, accessToken)
-    const messages = await this.getMessages(conversationMetadata, 8, accessToken)
+    const messages = await this.getMessages(conversationMetadata, 6, accessToken)
     const formattedMessages = this.formatMessagesForChatGPT(messages)
     return formattedMessages;
   }
@@ -98,7 +99,7 @@ export default class GoHighLevelService implements ICRMService, IOAuth2API{
   } 
 
   private formatMessagesForChatGPT = (messages: GHLSMSMessage[]): OpenAITrainingData[] => {
-    const trainingData: OpenAITrainingData[] = [];
+    let trainingData: OpenAITrainingData[] = [];
     let currentConvoId = ''
     for (const message of messages) {
       if (message.conversationId !== currentConvoId) {
@@ -129,18 +130,26 @@ export default class GoHighLevelService implements ICRMService, IOAuth2API{
 
       trainingData[trainingData.length - 1].messages.push({
         role: message.direction === 'inbound' ? 'user' : 'assistant',
+        timestamp: message.timestamp,
         content: message.body,
       });      
     }
 
-    // the last message should be the assistant's response
-    for (const data of trainingData) {
-      while (data.messages.length > 0) {
-        const lastMessage = data.messages[data.messages.length - 1];
-        if (lastMessage.role === 'user') {
-          data.messages.pop(); // Remove the last message if it's from the user
-        } else {
-          break;
+    // for each trainingData, go over every message, every time assistant responds AND user responds after, make a new TrainingData with that assistant response at the end
+    let numInserted = 0;
+    for (let i = 0; i < trainingData.length; i++) {
+      const messages = trainingData[i].messages
+      for (let j = 0; j < messages.length; j++) {
+        if (messages[j].role === 'assistant' && messages[j + 1]?.role === 'user') {
+          // make newTrainingData all the messages up to and including index j
+          // but not including j + 1
+          const newTrainingData: OpenAITrainingData = { messages: [] }
+          for (let k = 0; k <= j; k++) {
+            newTrainingData.messages.push(messages[k])
+          }
+          // add it at the right spot... right after the originial trainingData
+          trainingData.splice(i, 0, newTrainingData)
+          i++;
         }
       }
     }
@@ -151,6 +160,60 @@ export default class GoHighLevelService implements ICRMService, IOAuth2API{
         trainingData.splice(i, 1);
       }
     }
-    return trainingData;
+
+    // remove the conversation if it has no messages from user
+    trainingData = trainingData.filter((data) => {
+      for (const message of data.messages) { 
+        if (message.role === 'user' && message.content.length > 0) {
+          return true;
+        }
+      }
+      return false;
+    })
+
+    // remove anything that doesn't have assistant as the last message
+    trainingData = trainingData.filter((data) => {
+      const lastMessage = data.messages[data.messages.length - 1]
+      return lastMessage.role === 'assistant' && lastMessage.content.length > 0;
+    });
+
+    // remove anything where the last message isn't within a day of the message before it
+    trainingData = trainingData.filter((data) => {
+      const messages = data.messages
+      if (messages.length < 2) {
+        return false;
+      }
+      const lastMessage = messages[messages.length - 1]
+      const secondToLastMessage = messages[messages.length - 2]
+      // get time difference in milliseconds between the two messages
+      if (!lastMessage.timestamp || !secondToLastMessage.timestamp) {
+        return false;
+      }
+      const timeDiff = Math.abs(new Date(lastMessage.timestamp).getTime() - new Date(secondToLastMessage.timestamp).getTime())
+      const diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24))
+      return diffDays <= 1;
+    });
+
+    // add a system message at the beginning of each training data
+    trainingData = trainingData.map((data) => {
+      const systemMessage: { role: "user" | "assistant" | "system"; content: string; timestamp: Date } = {
+        role: 'system',
+        content: 'You are a real estate investor. Your main goal is to find off market properties that need work or need to be sold fast by the seller',
+        timestamp: new Date()
+      }
+      data.messages.unshift(systemMessage)
+      return data
+    })
+
+    return trainingData.map((data) => {
+      return {
+        messages: data.messages.map((message) => {
+          return {
+            role: message.role,
+            content: message.content
+          }
+        })
+      } as OpenAITrainingData
+    });
   }
 }
