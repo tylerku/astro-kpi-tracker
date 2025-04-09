@@ -1,12 +1,10 @@
 import IAIAPI from '../AI.api.interface'
 import OpenAI from "openai";
 
-const client = new OpenAI();
 
 export default class OpenAIAPI implements IAIAPI {
 
-  private client?: OpenAI;
-
+  private client: OpenAI;
 
   constructor(apiKey: string) {
     if (!apiKey) {
@@ -16,7 +14,7 @@ export default class OpenAIAPI implements IAIAPI {
   }
 
   ask = async (prompt: string): Promise<string> => {
-    const completion = await client.chat.completions.create({
+    const completion = await this.client.chat.completions.create({
       model: "gpt-4o",
       messages: [
           {

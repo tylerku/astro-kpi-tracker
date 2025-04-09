@@ -1,4 +1,4 @@
-import AIService from './AIService';
+import aiService from './AIService';
 import crmService from './CRMService'
 
-export { AIService, crmService };
+export { aiService, crmService };

@@ -32,9 +32,18 @@ export default class GoHighLevelService implements ICRMService, IOAuth2API{
   getChatGPTTrainingData = async (accessToken: string): Promise<any[]> => {
     const contacts = await this.getContacts(800, ['realtor'], accessToken)
     const conversationMetadata = await this.getConversations(contacts, accessToken)
-    const messages = await this.getMessages(conversationMetadata, 6, accessToken)
+    const messages = await this.getMessagesForConversations(conversationMetadata, 6, accessToken)
     const formattedMessages = this.formatMessagesForChatGPT(messages)
     return formattedMessages;
+  }
+
+  getMessages = async (contactId: string, limit: number, accessToken: string): Promise<GHLSMSMessage[]> => {
+    const convoResp = await this.api.searchConversations(contactId, accessToken);
+    if (convoResp.total > 1) { throw new Error("Found multiple contacts for one contact ID") }
+    if (convoResp.total === 0) { throw new Error("No conversations found for provided contact ID") }
+    const convo = convoResp.conversations[0]
+    const messages = await this.api.getMessages(convo.id, limit, accessToken)
+    return messages
   }
 
   private getContacts = async (amount: 'all' | number, tags: string[], accessToken: string): Promise<GHLContact[]> => {
@@ -80,7 +89,7 @@ export default class GoHighLevelService implements ICRMService, IOAuth2API{
     return conversations
   }
 
-  private getMessages = async (conversations: GHLConversation[], messagesPerConvo: number, accessToken: string): Promise<GHLSMSMessage[]> => {
+  private getMessagesForConversations = async (conversations: GHLConversation[], messagesPerConvo: number, accessToken: string): Promise<GHLSMSMessage[]> => {
     let messages: GHLSMSMessage[] = []
     let counter = 0;
     for (const conversation of conversations) {
