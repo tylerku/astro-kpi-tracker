@@ -81,10 +81,10 @@ export default class GoHighLevelAPI implements IGoHighLevelAPI, IOAuth2API {
         locationId: data.locationId,
         companyId: data.companyId,
       };
-      await this.storeAuthCredentials(auth);
+      // await this.storeAuthCredentials(auth);
       return auth;
     } catch (error) {
-      throw new Error('Error fetching CRM Auth Object: ' + error);
+      throw new Error('Error fetching CRM OAuth2 Credentials: ' + error);
     }
   };
 

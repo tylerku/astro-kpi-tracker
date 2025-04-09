@@ -1,4 +1,4 @@
-import { SMSMessage } from "@/models/Message";
+import { Message } from "@/models/Message";
 
 export default interface IAIService {
   /**
@@ -7,5 +7,5 @@ export default interface IAIService {
    * @param messages A set of messages to base the agent outreach response on
    * @returns a text message response 
    */
-  generateAgentOutreachResponse: (messages: SMSMessage[]) => Promise<string>;
+  generateAgentOutreachResponse: (messages: Message[]) => Promise<string>;
 }

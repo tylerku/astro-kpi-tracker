@@ -1,6 +1,6 @@
 import { IAIAPI } from '@/api/ai';
 import IAIService from '../AIService.interface';
-import { SMSMessage } from '@/models/Message';
+import { Message } from '@/models/Message';
 import OpenAIAPI from '@/api/ai/OpenAI'
 
 
@@ -14,7 +14,7 @@ export default class AIService implements IAIService {
     this.api = new OpenAIAPI(apiKey);
   }
 
-  generateAgentOutreachResponse = async (messages: SMSMessage[]): Promise<string> => {
+  generateAgentOutreachResponse = async (messages: Message[]): Promise<string> => {
     messages.reverse();
     const messageHistory = messages.map((message) => `(${message.direction}) ${message.body}`).join('\n');
     const prompt = `

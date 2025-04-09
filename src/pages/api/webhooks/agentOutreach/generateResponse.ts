@@ -1,12 +1,10 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import cookies from "cookies";
-import { crmService } from '@/services';
+import { crmService, aiService } from '@/services';
 
-export default async function GET(
-	req: NextApiRequest,
-	res: NextApiResponse,
-){
+export default async (req: NextApiRequest, res: NextApiResponse): Promise<void> => {
   try {
+    console.log('arrived in function')
     const body = req.body
     const { contactId } = body
     //{{ contact.ai_response }}
@@ -17,6 +15,7 @@ export default async function GET(
     }
     const messageLimit = 10;
     const messages = await crmService.getMessages(contactId, messageLimit, crmAccessToken)
+    const response = await aiService.generateAgentOutreachResponse(messages)
     return res.status(200).json({messages})
   } catch (error) {
     console.error('Error parsing body: ', error)
