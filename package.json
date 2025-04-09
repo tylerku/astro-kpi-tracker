@@ -29,6 +29,7 @@
     "moment-timezone": "^0.5.43",
     "next": "13.4.8",
     "next-cookies": "^2.0.3",
+    "openai": "^4.93.0",
     "pg": "^8.11.3",
     "postcss": "8.4.24",
     "querystring": "^0.2.1",
