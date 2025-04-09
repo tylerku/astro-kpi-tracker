@@ -5,7 +5,14 @@ import OpenAIAPI from '@/api/ai/OpenAI'
 
 
 export default class AIService implements IAIService {
-  private api: IAIAPI = new OpenAIAPI(process.env.OPENAI_API_KEY ?? '')
+  private api: IAIAPI;
+
+  constructor(apiKey: string) {
+    if (!apiKey) {
+      throw new Error('OpenAI API Key is required to use OpenAI API');
+    }
+    this.api = new OpenAIAPI(apiKey);
+  }
 
   generateAgentOutreachResponse = async (messages: SMSMessage[]): Promise<string> => {
     messages.reverse();

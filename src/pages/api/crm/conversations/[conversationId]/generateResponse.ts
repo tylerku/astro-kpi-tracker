@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import cookies from "cookies";
 import crmService from "@/services/CRMService/CRMService";
-import { AIService } from '@/services';
+import { aiService } from '@/services';
 
 
 export default async (req: NextApiRequest, res: NextApiResponse): Promise<void> => {
@@ -11,10 +11,9 @@ export default async (req: NextApiRequest, res: NextApiResponse): Promise<void> 
     if (Array.isArray(conversationId) || !conversationId) { throw new Error('Invalid conversationId'); }
     if (!crmAccessToken) { throw new Error('No crmAccessToken found. Cannot access crm api'); }
 
-    const messages = await crmService.getMessages(conversationId, crmAccessToken);
+    // const messages = await crmService.getMessages(conversationId, crmAccessToken);
     // const response = await AIService.getInstance().generateAgentOutreachResponse(messages);
     const response = {}
-    console.log('response is: ', response);
     return res.status(200).json(response);
   } catch (error) {
     console.log('Error getting crm messages: ', error);

@@ -12,7 +12,7 @@ export default async (req: NextApiRequest, res: NextApiResponse): Promise<void> 
       throw new Error('No crmAccessToken found. Cannot access crm api');
     }
 
-    const resp = await crmService.getMessages(conversationId, crmAccessToken);
+    const resp = await crmService.getMessages(conversationId, 6, crmAccessToken);
     return res.status(200).json(resp);
   } catch (error) {
     console.log('Error getting crm messages: ', error);
