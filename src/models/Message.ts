@@ -1,8 +1,13 @@
+export enum MessageDirection {
+  INBOUND = 'inbound',
+  OUTBOUND = 'outbound'
+}
+
 export interface Message {
   id: string;
   body: string;
   timestamp: Date;
-  direction: string;
+  direction: MessageDirection;
 }
 
 export interface SMSMessage extends Message {
