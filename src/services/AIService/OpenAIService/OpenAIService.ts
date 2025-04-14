@@ -1,4 +1,3 @@
-import { IAIAPI } from '@/api/ai';
 import IAIService from '../AIService.interface';
 import { Message } from '@/models/Message';
 import OpenAIAPI from '@/api/ai/OpenAI';
@@ -18,7 +17,6 @@ export default class OpenAIService implements IAIService {
   }
 
   generateAgentOutreachResponse = async (messages: Message[]): Promise<string> => {
-    messages.reverse();
     const prompt = `${AGENT_OUTREACH_PROMPT}`; // TODO: Add specifics like the agents name and anything else known about them
     const response = await this.api.createChatCompletion(prompt, messages, OpenAIModels.GPT_4_O_MINI);
     return response; 

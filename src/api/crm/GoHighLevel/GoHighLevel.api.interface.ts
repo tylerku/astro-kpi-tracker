@@ -16,4 +16,5 @@ export default interface ICRMAPI {
   getMessages(conversationId: string, limit: number, accessToken: string): Promise<GHLSMSMessage[]>;
   searchContacts(searchTerm: string[], pageLimit: number, accessToken: string, searchAfter: any[]): Promise<SearchContactsResult>;
   searchConversations(contactId: string, accessToken: string): Promise<SearchConversationsResult>;
+  updateContactCustomField(contactId: string, fieldId: string, newValue: string, accessToken: string): Promise<void>;
 }

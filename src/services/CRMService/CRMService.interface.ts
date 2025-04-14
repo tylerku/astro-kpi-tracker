@@ -12,4 +12,12 @@ export default interface ICRMService {
    * @param contactId The ID of the contract to retrieve messages for.
    */
   getMessages(contactId: string, limit: number, accessToken: string): Promise<Message[]>;
+
+  /**
+   * Saves an AI response to the contact. Usefull when AI is used to generate a response to a conversation.
+   * @param contactId The ID of the contact to save the response for.
+   * @param response The AI response to save.
+   * @param accessToken The access token for authentication.
+   */
+  saveContactAIResponse(contactId: string, response: string, accessToken: string): Promise<void>;
 }

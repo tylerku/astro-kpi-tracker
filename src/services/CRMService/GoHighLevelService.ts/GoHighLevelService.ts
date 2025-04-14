@@ -17,7 +17,7 @@ type OpenAITrainingData = {
   }[];
 }
 
-export default class GoHighLevelService implements ICRMService, IOAuth2API{
+export default class GoHighLevelService implements ICRMService, IOAuth2API{ 
   
   api: IGoHighLevelAPI & IOAuth2API = new GoHighLevelAPI();
 
@@ -44,6 +44,11 @@ export default class GoHighLevelService implements ICRMService, IOAuth2API{
     const convo = convoResp.conversations[0]
     const messages = await this.api.getMessages(convo.id, limit, accessToken)
     return messages
+  }
+
+  saveContactAIResponse = async (contactId: string, response: string, accessToken: string): Promise<void> => {
+    const aiResponseFieldId = 'j68PJLWVlIOzKLxzUbzY'; //TODO: Look up the field ID dynamically
+    await this.api.updateContactCustomField(contactId, aiResponseFieldId, response, accessToken);
   }
 
   private getContacts = async (amount: 'all' | number, tags: string[], accessToken: string): Promise<GHLContact[]> => {

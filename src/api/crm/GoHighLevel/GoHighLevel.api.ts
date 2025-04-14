@@ -1,7 +1,7 @@
 import { GHLSMSMessage } from '@/models/Message'
 import { GHLContact } from '@/models/Contact';
 import IGoHighLevelAPI, { SearchContactsResult, SearchConversationsResult } from './GoHighLevel.api.interface';
-import axios from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 import prisma from '@/prisma/prisma';
 import { OAuth2Credentials } from '@/models/auth';
 import { IOAuth2API, OAuth2CredentialsRequestParams } from '@/api/OAuth2.interface';
@@ -226,5 +226,34 @@ export default class GoHighLevelAPI implements IGoHighLevelAPI, IOAuth2API {
       return messages.reverse();
     }
     return [];
+  }
+
+  updateContactCustomField = async (contactId: string, fieldId: string, newValue: string, accessToken: string): Promise<void> => {
+    const url = `${process.env.GO_HIGH_LEVEL_API_BASE_URL}/contacts/${contactId}`;
+    const options: AxiosRequestConfig = {
+      method: 'PUT',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        Version: '2021-07-28',
+        
+        Accept: 'application/json',
+      },
+      data: {
+        customFields: [
+          {
+            "id": fieldId,
+            "field_value": newValue
+          }
+        ]
+      }
+    }
+    try {
+      await axios.put(url, options.data, { headers: options.headers });
+    } catch (error) {
+      console.error('Error updating contact custom field:', error);
+      throw error;
+    }
+    
+    return;
   }
 }

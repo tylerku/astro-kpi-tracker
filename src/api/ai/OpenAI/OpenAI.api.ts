@@ -33,8 +33,7 @@ export default class OpenAIAPI implements IAIAPI {
   }
 
   ;
-  private getContextRole(model: OpenAIModels): ContextRoles {
-    
+  private getSystemRole(model: OpenAIModels): ContextRoles {
     switch (model) {
       case OpenAIModels.GPT_3_5_TURBO:
         return ContextRoles.SYSTEM; 
@@ -52,19 +51,20 @@ export default class OpenAIAPI implements IAIAPI {
   }
 
   createChatCompletion = async (systemPrompt: string, messages: Message[], model: OpenAIModels): Promise<string> => {
-    const systemRole = this.getContextRole(model)
+    const systemRole = this.getSystemRole(model)
+    type MessageParam = OpenAI.Chat.Completions.ChatCompletionMessageParam;
     const contextMessages = messages.map((message) => ({
       role: message.direction === MessageDirection.INBOUND ? Roles.USER : Roles.ASSISTANT,
       content: [{
         type: 'text',
         text: message.body,
       }],
-    }));
-    const context = [{ role: systemRole, content: [{type: 'text', text: systemPrompt}] }, ...contextMessages];
+    } as MessageParam));
+    const context: MessageParam[] = [{ role: systemRole, content: [{type: 'text', text: systemPrompt}] }, ...contextMessages];
     try {
       const completion = await this.client.chat.completions.create({
-        messages: context,
         model,
+        messages: context,
         store: true, 
       });
       console.log(completion.choices[0].message.content);
