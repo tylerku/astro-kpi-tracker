@@ -67,7 +67,6 @@ export default class OpenAIAPI implements IAIAPI {
         messages: context,
         store: true, 
       });
-      console.log(completion.choices[0].message.content);
       return completion.choices[0].message.content ?? 'unknown error';
     } catch (error) {
       console.error('Error with OpenAI API:', error);

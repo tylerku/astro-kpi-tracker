@@ -20,12 +20,12 @@ model Crm {
   expiration   DateTime
   refreshToken String
   crmType String
-  userId  Int?
+  userId  String
   crmUserId String   @unique
 }
 
 model User {
-  id    Int     @id @default(autoincrement())
+  id    String     @id @default(uuid())
   email String  @unique
   authProviderId String
   firstName  String?

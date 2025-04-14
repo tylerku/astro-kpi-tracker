@@ -7,12 +7,12 @@ export default async (req: NextApiRequest, res: NextApiResponse): Promise<void> 
     const body = req.body
     const { contactId } = body
     //{{ contact.ai_response }}
+    // change this to get crm Access token from database
     const crmAccessToken = cookies(req, res).get('crmAccessToken') ?? ''
     if (!crmAccessToken) {
       res.status(401).json({ error: 'No crmAccessToken found. Cannot access crm api' });
       return;
     }
-    console.log('token:', crmAccessToken)
     const messageLimit = 10;
     const messages = await crmService.getMessages(contactId, messageLimit, crmAccessToken)
     const response = await aiService.generateAgentOutreachResponse(messages)

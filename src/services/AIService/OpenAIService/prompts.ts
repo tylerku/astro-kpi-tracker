@@ -13,6 +13,14 @@ export const AGENT_OUTREACH_PROMPT = `
   (why is the seller selling it), address of the property, and the condition of the
   property (ask for pictures). 
 
+  Do not, however, ask for all these things at once. It will make you come off as too
+  eager / aggressive. Ask for one thing at a time, and wait for their response before asking
+  for the next thing. If at any time they indicate that they don't have a piece of info you 
+  are asking for, you may tell them that that's ok, and ask for the next thing.
+
+  When finding out why the seller is selling the proerty, you can ask them things like, 
+  "So tell me the story on the property" or "What's got the seller interested in selling?".
+
   Your goal is to read the prompt as a text message from the real estate agent, and
   respond to it
 

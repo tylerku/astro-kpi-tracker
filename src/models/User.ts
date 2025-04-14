@@ -1,7 +1,2 @@
-export type User = {
-  id: string
-  firstName: string
-  lastName: string
-  authProviderId: string
-  email: string
-}
+import { User } from '@prisma/client';
+export type { User };
