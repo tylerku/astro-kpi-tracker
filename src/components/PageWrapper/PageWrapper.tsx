@@ -8,7 +8,6 @@ interface PageWrapperProps {
 
 const PageWrapper: React.FC<PageWrapperProps> = (props) => {
   const {state, dispatch} = useContext(AuthContext)
-  // get refreshToken from local storage
 
   useEffect(() => {
     console.log('stat.accessToken is: ', state.accessToken)

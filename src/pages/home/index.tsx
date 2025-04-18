@@ -67,6 +67,15 @@ const HomePage: React.FC<HomePageProps> = (props) => {
     }
   }
 
+  const handleConnectGoHighLevelClicked = async () => {
+    try {
+      const resp = await axios.get('/api/auth/crm/start')
+      console.log('Connect Go High Level response: ', resp.data)
+    } catch (error) {
+      console.error('Error connecting Go High Level: ', error)
+    }
+  }
+
   const getSingleBarGraphOptionsFromKPIMetrics = (kpiMetrics: DailyKPI[]): SingleBarGraphOption[] => {
     const singleBarGraphOptions: SingleBarGraphOption[] = []
     kpiMetrics.forEach((kpi) => {
@@ -171,9 +180,7 @@ const HomePage: React.FC<HomePageProps> = (props) => {
           <div className='w-full h-[50%] grow space-x-6 max-h-[50%] relative flex flex-row'>
             {/* <GoalsBoard className='w-[50%] max-w-[50%] h-full' options={getGoalsBoardOptions()}/>  */}
             <GoalsBoard className='w-[50%] max-w-[50%] h-full' options={[]}/> 
-            <BasicButton onClick={() => {
-              router.push(`/api/auth/crm/start?user=${currentUser.id}`)    
-            }} text={'Connect Go High Level'}/>           
+            <BasicButton onClick={() => handleConnectGoHighLevelClicked()} text={'Connect Go High Level'}/>           
             <BasicButton onClick={() => handleTestAIClicked()} text={'Test AI'}/>
           </div>
         </div>
