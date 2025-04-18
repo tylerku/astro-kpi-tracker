@@ -6,8 +6,6 @@ import { GHLConversation } from "@/models/Conversation";
 import { GHLContact } from "@/models/Contact";
 import { OAuth2Credentials } from "@/models/auth";
 import { IOAuth2API, OAuth2CredentialsRequestParams } from "@/api/OAuth2.interface";
-import { content_v2_1 } from "googleapis";
-import { FineTuningJobsPage } from "openai/resources/fine-tuning/jobs/jobs";
 
 type OpenAITrainingData = {
   messages: {
