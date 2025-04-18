@@ -1,3 +1,5 @@
 import GoHighLevelService from './GoHighLevelService';
+import goHighLevelAPI from '@/api/crm/GoHighLevel';
 
-export default GoHighLevelService;
+export default new GoHighLevelService(goHighLevelAPI);
+export { GoHighLevelService };

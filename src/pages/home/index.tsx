@@ -28,14 +28,14 @@ const HomePage: React.FC<HomePageProps> = (props) => {
 
   useEffect(() => {
     console.log(userWeeklyKPIs)
-    if (!userWeeklyKPIs) return
-    const barGraphOptions = getBarGraphOptionsFromWeeklyKPIMetrics(userWeeklyKPIs)
-    setBarGraphOptions(barGraphOptions)
-    const todayKey = moment().format('YYYY-MM-DD')
-    if (todayKey in userWeeklyKPIs) {
-      const singleBarGraphOptions = getSingleBarGraphOptionsFromKPIMetrics(userWeeklyKPIs[todayKey]) 
-      setSingleBarGraphOptions(singleBarGraphOptions)
-    }
+    // if (!userWeeklyKPIs) return
+    // const barGraphOptions = getBarGraphOptionsFromWeeklyKPIMetrics(userWeeklyKPIs)
+    // setBarGraphOptions(barGraphOptions)
+    // const todayKey = moment().format('YYYY-MM-DD')
+    // if (todayKey in userWeeklyKPIs) {
+      // const singleBarGraphOptions = getSingleBarGraphOptionsFromKPIMetrics(userWeeklyKPIs[todayKey]) 
+      // setSingleBarGraphOptions(singleBarGraphOptions)
+    // }
   }, [userWeeklyKPIs])
 
   const initUserKPIs = async (user: User) => {
@@ -169,9 +169,10 @@ const HomePage: React.FC<HomePageProps> = (props) => {
             <GraphsSection className={'w-[50%]'/*'grow-2 lg:grow-3'*/} options={barGraphOptions ?? []} />
           </div>
           <div className='w-full h-[50%] grow space-x-6 max-h-[50%] relative flex flex-row'>
-            <GoalsBoard className='w-[50%] max-w-[50%] h-full' options={getGoalsBoardOptions()}/> 
+            {/* <GoalsBoard className='w-[50%] max-w-[50%] h-full' options={getGoalsBoardOptions()}/>  */}
+            <GoalsBoard className='w-[50%] max-w-[50%] h-full' options={[]}/> 
             <BasicButton onClick={() => {
-              router.push(`/api/auth/crm/start`)    
+              router.push(`/api/auth/crm/start?user=${currentUser.id}`)    
             }} text={'Connect Go High Level'}/>           
             <BasicButton onClick={() => handleTestAIClicked()} text={'Test AI'}/>
           </div>

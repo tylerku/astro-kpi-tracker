@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "prisma-migrate": "npx prisma migrate dev",
+    "prisma-migrate": "node scripts/migrate-prisma.js",
     "prisma-generate": "npx prisma generate"
   },
   "dependencies": {
@@ -50,6 +50,7 @@
     "@types/node": "20.8.3",
     "@types/pg": "^8.10.7",
     "@types/react": "18.2.25",
+    "dotenv-cli": "^8.0.0",
     "prisma": "^6.5.0"
   }
 }

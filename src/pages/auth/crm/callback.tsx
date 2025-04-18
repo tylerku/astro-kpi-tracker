@@ -14,33 +14,29 @@ const CallbackPage: React.FC = () => {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    const { code } = router.query;
-    saveAccessTokenFromAuthCode(code as string);
+    const { code, state: userId } = router.query;
+    saveAccessTokenFromAuthCode(code as string, userId as string);
   }, [router.query])
 
-  const saveAccessTokenFromAuthCode = async (authCode: string) => {
-    if (authCode) {
-      try {
-        console.log('getting access token from auth code: ', authCode)
-        const resp = await fetch('/api/auth/crm/callback', {
-          method: 'POST',
-          body: JSON.stringify({ code: authCode }),
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        })
-        const data = await resp.json()
-        //const user = data.user
-        //dispatch(setCurrentUser(user))
-        router.push('/home')
-      } catch (error) {
-        console.error('Error during OAuth2 astroblasterrr callback:', error);
-      }
-      setIsLoading(false);
-      return null
-    } else {
-      console.log('There is no code found in the url')
+  const saveAccessTokenFromAuthCode = async (code: string, userId: string) => {
+    try {
+      await fetch('/api/auth/crm/updateTokens', {
+        method: 'POST',
+        body: JSON.stringify({
+          code,
+          userId
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      router.push('/home')
+    } catch (error) {
+      console.error('Error during OAuth2 crm callback:', error);
+      // TODO return an error message to the home page
     }
+    setIsLoading(false);
+    return null
   }
 
   const override: CSSProperties = {

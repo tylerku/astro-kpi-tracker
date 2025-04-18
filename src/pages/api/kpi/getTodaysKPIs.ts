@@ -9,7 +9,7 @@ export default async function handler(
   try {
     const userIdParam = request.query['userId']; 
     const userId = Number(userIdParam)
-    const result = await dailyKPIService.getTodaysKPIs(userId, TIMEZONE.MST)
+    const result = {}; //await dailyKPIService.getTodaysKPIs(userId, TIMEZONE.MST)
     return response.status(200).json({
       data: result
     });

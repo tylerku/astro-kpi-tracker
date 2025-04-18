@@ -13,9 +13,9 @@ export default async function handler(
     return `${JSON.stringify(thisWeeksKPIs)}`
   }
 
-  kpiService.incrementKPI({
-    user
-  })
+  // kpiService.incrementKPI({
+  //   user
+  // })
 
   const returnBody = await getMessageBody()
   response.status(200).json({

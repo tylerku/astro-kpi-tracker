@@ -1,4 +1,5 @@
 import aiService from './AIService';
-import crmService from './CRMService'
+import crmService from './CRMService';
+import credentialsService from './CredentialsService';
 
-export { aiService, crmService };
+export { aiService, crmService, credentialsService };

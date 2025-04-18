@@ -18,6 +18,8 @@ logs
 # Training Data
 *.jsonl
 
+prisma/migrations/
+
 # Dependency directories
 /.pnp
 .pnp.js

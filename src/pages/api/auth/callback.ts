@@ -22,6 +22,8 @@ const getUserFromAccessToken = async (accessToken?: string | null): Promise<User
         email: userInfo?.email ?? '',
         firstName: userInfo?.firstName ?? '',
         lastName: userInfo?.lastName ?? '',
+        updatedAt: new Date(),
+        createdAt: new Date()
       }
       const newUser = await userService.createUser(newUserParams)
       if (!newUser) throw new Error('Failed to create new user')

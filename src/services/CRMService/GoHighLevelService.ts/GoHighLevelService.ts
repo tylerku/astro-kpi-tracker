@@ -19,7 +19,11 @@ type OpenAITrainingData = {
 
 export default class GoHighLevelService implements ICRMService, IOAuth2API{ 
   
-  api: IGoHighLevelAPI & IOAuth2API = new GoHighLevelAPI();
+  api: IGoHighLevelAPI & IOAuth2API;
+
+  constructor(api: IGoHighLevelAPI & IOAuth2API) {
+    this.api = api;
+  }
 
   getAuthCredentials = async (params: OAuth2CredentialsRequestParams): Promise<OAuth2Credentials> => {
     return this.api.getAuthCredentials(params)

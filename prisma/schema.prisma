@@ -13,15 +13,29 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model Crm {
-  id        Int      @id @default(autoincrement())
-  user      User?    @relation(fields: [userId], references: [id])
-  accessToken String
-  expiration   DateTime
-  refreshToken String
-  crmType String
-  userId  String
-  crmUserId String   @unique
+// make a string enum for crmType
+enum AuthProvider {
+  GHL
+  GOOGLE
+  INTERNAL
+}
+
+enum CredentialsType {
+  API_KEY
+  OAUTH2
+}
+
+model Credentials {
+  id String @id @default(uuid())
+  type CredentialsType
+  value Json 
+  provider AuthProvider
+  authProviderUserId String @unique
+  revoked Boolean @default(false) 
+  userId String?
+  user User? @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 model User {
@@ -30,5 +44,7 @@ model User {
   authProviderId String
   firstName  String?
   lastName   String?
-  crms   Crm[]  // Optional: Add this to define the back relation
+  credentials   Credentials[]  // Optional: Add this to define the back relationnn
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }

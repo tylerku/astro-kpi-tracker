@@ -8,14 +8,6 @@ import { IOAuth2API, OAuth2CredentialsRequestParams } from '@/api/OAuth2.interfa
 import jwt from 'jsonwebtoken';
 import { GHLConversation } from '@/models/Conversation';
 
-interface GHLCredentials extends OAuth2Credentials {
-  scope: string;
-  tokenType: string;
-  userId: string;
-  locationId: string;
-  companyId: string;
-}
-
 interface JWTPayload {
   authClass: string
   authClassId: string
@@ -41,20 +33,24 @@ export default class GoHighLevelAPI implements IGoHighLevelAPI, IOAuth2API {
   }
 
 
-  getAuthCredentials = async (params: OAuth2CredentialsRequestParams): Promise<GHLCredentials> => {
+  getAuthCredentials = async (params: OAuth2CredentialsRequestParams): Promise<OAuth2Credentials> => {
     const { URLSearchParams } = require('url');
     const fetch = require('node-fetch');
     const encodedParams = new URLSearchParams();
+    if (!params.refreshToken && !params.code) {
+      throw new Error('Either refresh token or code must be provided to get auth credentials');
+    }
     if (params.refreshToken) {
       encodedParams.set('refresh_token', params.refreshToken);
+      encodedParams.set('grant_type', 'refresh_token');
     }
     if (params.code) {
       encodedParams.set('code', params.code);
+      encodedParams.set('grant_type', 'authorization_code');
     }
     encodedParams.set('client_id', process.env.GO_HIGH_LEVEL_CLIENT_ID);
     encodedParams.set('client_secret', process.env.GO_HIGH_LEVEL_CLIENT_SECRET);
-    encodedParams.set('grant_type', 'authorization_code');
-    encodedParams.set('redirect_uri', process.env.GO_HIGH_LEVEL_OAUTH_CALLBACK_URL);
+    encodedParams.set('redirect_uri', process.env.GO_HIGH_LEVEL_OAUTH_CALLBACK_URI);
     encodedParams.set('user_type', 'Company');
 
     const url = 'https://services.leadconnectorhq.com/oauth/token';
@@ -70,42 +66,23 @@ export default class GoHighLevelAPI implements IGoHighLevelAPI, IOAuth2API {
     try {
       const response = await fetch(url, options);
       const data = await response.json();
-
-      const auth: GHLCredentials = {
+      const tokenExpiration = new Date(Date.now() + (data.expires_in * 1000));
+      const auth: OAuth2Credentials = {
         accessToken: data.access_token,
         refreshToken: data.refresh_token,
-        expiresIn: data.expires_in,
+        expiration: tokenExpiration,
         scope: data.scope,
         tokenType: data.token_type,
         userId: data.userId,
         locationId: data.locationId,
         companyId: data.companyId,
       };
-      // await this.storeAuthCredentials(auth);
+      
       return auth;
     } catch (error) {
       throw new Error('Error fetching CRM OAuth2 Credentials: ' + error);
     }
   };
-
-  storeAuthCredentials = async (auth: GHLCredentials): Promise<void> => {
-    const resp = await prisma.crm.upsert({
-      where: { crmUserId: auth.userId },
-      update: {
-        accessToken: auth.accessToken,
-        expiration: new Date(Date.now() + auth.expiresIn * 1000),
-        refreshToken: auth.refreshToken,
-        crmType: 'GoHighLevel', // Example CRM type
-      },
-      create: {
-        crmUserId: auth.userId,
-        accessToken: auth.accessToken,
-        expiration: new Date(Date.now() + auth.expiresIn * 1000),
-        refreshToken: auth.refreshToken,
-        crmType: 'GoHighLevel',
-      },
-    });   
-  }
 
   searchContacts = async (tags: string[], pageLimit: number, accessToken: string, searchAfter: any[]): Promise<SearchContactsResult> => {
     const url = `${process.env.GO_HIGH_LEVEL_API_BASE_URL}/contacts/search`;
