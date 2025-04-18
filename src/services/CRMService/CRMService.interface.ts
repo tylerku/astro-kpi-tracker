@@ -13,6 +13,10 @@ export default interface ICRMService {
    */
   getMessages(contactId: string, limit: number, accessToken: string): Promise<Message[]>;
 
+  /**
+   * Get all of the unread messages
+   * @param accessToken The access token for authentication.
+   */
   getUnreadMessages(accessToken: string): Promise<Message[]>;
   /**
    * Saves an AI response to the contact. Usefull when AI is used to generate a response to a conversation.
