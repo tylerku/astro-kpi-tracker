@@ -1,5 +1,11 @@
 import { Message } from "@/models/Message";
 
+export interface AgentOutreachState {
+  sellerMotivation?: string;
+  address?: string;
+  condition: string;
+}
+
 export default interface IAIService {
   /**
    * Generates an agent outreach response from a group of text messages. This response is

@@ -1,5 +1,5 @@
 import OpenAIAPI from './OpenAI.api';
-import IOpenAIAPI from './OpenAI.api.interface';
+import IOpenAIAPI, { ChatCompletionResult, ChatCompletionToolNames, ChatCompletionTool } from './OpenAI.api.interface';
 
-export { type IOpenAIAPI };
+export { type IOpenAIAPI, type ChatCompletionResult, ChatCompletionToolNames, type ChatCompletionTool };
 export default OpenAIAPI;
