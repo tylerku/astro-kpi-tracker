@@ -61,7 +61,6 @@ export default class OpenAIAPI implements IAIAPI {
       });
     }
     try {
-      console.log('calling completion API...')
       let completion = await fetchCompletion();
       switch (completion.choices[0].finish_reason) {
         case 'tool_calls':
@@ -85,7 +84,7 @@ export default class OpenAIAPI implements IAIAPI {
               }
             }
             return result;
-          }
+          } else { throw new Error('Multiple tool calls are not supported.'); }
         case 'stop':
           const message = completion.choices[0].message.content;
           const result: ChatCompletionResult = {

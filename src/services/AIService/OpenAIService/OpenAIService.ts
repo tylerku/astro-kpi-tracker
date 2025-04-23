@@ -1,5 +1,5 @@
 import IAIService from '../AIService.interface';
-import { AGENT_OUTREACH_PROMPT_2, AgentOutreachLeadDetails } from './prompts';
+import { getAgentOutreachPrompt, AgentOutreachLeadDetails } from '../prompts'
 import { Message } from '@/models/Message';
 import OpenAIAPI, { ChatCompletionResult, ChatCompletionToolNames, ChatCompletionTool } from '@/api/ai/OpenAI';
 import { OpenAIModels, IOpenAIAPI } from '@/api/ai';
@@ -18,34 +18,29 @@ export default class OpenAIService implements IAIService {
 
   generateAgentOutreachResponse = async (messages: Message[]): Promise<string> => {
     // const prompt = `${AGENT_OUTREACH_PROMPT}`; // TODO: Add specifics like the agents name and anything else known about them
-    const promptParams: AgentOutreachLeadDetails = {}
+    const leadDetails: AgentOutreachLeadDetails = {}
     const toolNamesToLeadDetails: Record<ChatCompletionToolNames, keyof AgentOutreachLeadDetails> = {
       [ChatCompletionToolNames.SAVE_ADDRESS]: 'address',
       [ChatCompletionToolNames.SAVE_SELLER_MOTIVATION]: 'sellerMotivation',
       [ChatCompletionToolNames.SAVE_PROPERTY_CONDITION]: 'condition'
     }
-    const additionalPromptDetail = `
-    If the property address is included in a recent message, but not in the STATE OBJECT above, call the
-    ${ChatCompletionToolNames.SAVE_ADDRESS} function. Do the same for sellers motivation and
-    property condition. If either are found in a recent message but no the STATE OBJECT above, call the
-    ${ChatCompletionToolNames.SAVE_SELLER_MOTIVATION} or ${ChatCompletionToolNames.SAVE_PROPERTY_CONDITION}
-    function respectively.
-    `
-    let prompt = AGENT_OUTREACH_PROMPT_2(promptParams, additionalPromptDetail);
+  
+    let prompt = getAgentOutreachPrompt(leadDetails, toolNamesToLeadDetails, true); // TODO: Add specifics like the agents name and anything else known about them 
+    console.log('Prompt', prompt);
     const tools = this.getAgentOutreachChatCompletionTools(); 
     let result = await this.api.createChatCompletion(prompt, messages, OpenAIModels.GPT_4_O_MINI, tools);
     let usedToolsCount = 0;
-    while (result.status === 'tool_called' && usedToolsCount < 3) {
+    while (result.status === 'tool_called' && usedToolsCount < 1) {
       usedToolsCount++;
       if (!result.tool?.arg) { throw new Error('Tool arg is missing where it is required'); }
-      promptParams[toolNamesToLeadDetails[result.tool!.name]] = result.tool.arg;
-      console.log('prompt params: ', promptParams)
-      prompt = AGENT_OUTREACH_PROMPT_2(promptParams, additionalPromptDetail);
-      console.log(prompt)
+      leadDetails[toolNamesToLeadDetails[result.tool!.name]] = result.tool.arg;
+      prompt = getAgentOutreachPrompt(leadDetails, toolNamesToLeadDetails, false);
+      console.log('Prompt', prompt);
       result = await this.api.createChatCompletion(prompt, messages, OpenAIModels.GPT_4_O_MINI, tools);
-      console.log('result: ', result.status)
+      // console.log('result', JSON.parse(JSON.stringify(result)));
     }
     if (!result.message) { throw new Error('No message found when expecting a message in generateAgentOutreachResponse'); }
+    console.log('message: ', result.message);
     return result.message; 
   }
 
