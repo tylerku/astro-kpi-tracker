@@ -25,6 +25,13 @@ enum CredentialsType {
   OAUTH2
 }
 
+enum ObjectiveFieldType {
+  STRING
+  NUMBER
+  DATE
+  BOOLEAN
+}
+
 model Credentials {
   id String @id @default(uuid())
   type CredentialsType
@@ -38,13 +45,67 @@ model Credentials {
   updatedAt DateTime @default(now()) @updatedAt
 }
 
+model Contact { 
+  id String @id @default(uuid())
+  firstName String?
+  lastName String?
+  email String?
+  phone String?
+  objectiveId String?
+  objective Objective? @relation(fields: [objectiveId], references: [id])
+  ConversationResults ConversationResults[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model ObjectiveFieldDefinition {
+  id String @id @default(uuid())
+  name String
+  type ObjectiveFieldType
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  objectiveId String
+  Objective Objective? @relation(fields: [objectiveId], references: [id])
+  ObjectiveFieldValue ObjectiveFieldValue[]
+}
+
+model ObjectiveFieldValue {
+  id String @id @default(uuid())
+  value String
+  definitionId String
+  definition ObjectiveFieldDefinition? @relation(fields: [definitionId], references: [id])
+  conversationResultsId String @unique
+  conversationResults ConversationResults? @relation(fields: [conversationResultsId], references: [id])
+}
+
+/// The `Objective` model represents a specific task or goal that a user can set for their contacts.
+model Objective {
+  id String @id @default(uuid())
+  name String
+  description String?
+  requiredData ObjectiveFieldDefinition[] /// fields required to be filled by the contact in order to complete the objective
+  prompt String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  Contact Contact[]
+}
+
+model ConversationResults {
+  id String @id @default(uuid())
+  contactId String?
+  contact Contact? @relation(fields: [contactId], references: [id])
+  dataGathered ObjectiveFieldValue[] /// Json array that maps the required fields definded in the objective to the values provided by the contact throughout the conversation with type { name: string, value: }
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
 model User {
   id    String     @id @default(uuid())
   email String  @unique
   authProviderId String
   firstName  String?
   lastName   String?
-  credentials   Credentials[]  // Optional: Add this to define the back relationnn
+  credentials   Credentials[]
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 }
